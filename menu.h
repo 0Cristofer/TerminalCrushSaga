@@ -1,0 +1,13 @@
+/*Arquivo header de menu.c
+Data: 31/05/2016
+Autor: Cristofer Oswald */
+
+#ifndef MENU
+#define MENU
+
+#include "util.h"
+
+int mainMenu();
+void leDados(game *jogo);
+
+#endif
