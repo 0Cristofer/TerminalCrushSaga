@@ -13,8 +13,9 @@
 int main(){
     int opt = 1;
     fila_t* fila;
-    lista_t* elemento;
-    lista_t* retirado;
+    lista_t *elemento;
+    int *retirado;
+    int ret;
 
     fila = malloc(sizeof(fila_t));
     printf("Teste da biblioteca de fila implementada com lista ligada!\n");
@@ -32,9 +33,11 @@ int main(){
                 break;
 
             case 2:
-                retirado = malloc(sizeof(lista_t));
-                removeFila(fila, retirado);
-                printf("Elemento retirado info: %d\n",retirado->info);
+                retirado = malloc(sizeof(int));
+                ret = removeFila(fila, retirado);
+                if(ret){
+			printf("Elemento retirado info: %d\n", *retirado);
+		}
                 break;
 
             case 3:

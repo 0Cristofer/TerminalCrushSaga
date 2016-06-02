@@ -6,52 +6,56 @@
 /***********************************************************/
 
 #include <stdio.h>
+
 #include "fila.h"
 
 /* inicializa */
 void inicializaFila(fila_t* fila){
-    fila->inicio = NULL;
-    fila->fim = NULL;
+	fila->inicio = NULL;
+	fila->fim = NULL;
 }
 
 /* vazia_check */
 int filaVazia(fila_t* fila){
-    if((fila->inicio == NULL) && (fila->fim == NULL)){
-        return 1;
-    } else {
-        return 0;
-    }
+	if((fila->inicio == NULL) && (fila->fim == NULL)){
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 /* insere */
 void insereFila(fila_t* fila, lista_t* elemento){
-    if (filaVazia(fila)){
-        fila->fim = elemento;
-        fila->fim->prox = NULL;
-    }
-    elemento->prox = fila->inicio;
-    fila->inicio = elemento;
+	if (filaVazia(fila)){
+		fila->inicio = elemento;
+	}
+	else{
+		fila->fim->prox = elemento;
+	}
+	printf("1\n");
+	elemento->prox = NULL;
+	printf("2\n");
+	fila->fim = elemento;
 }
 
 /* remove */
-void removeFila(fila_t* fila, lista_t* elemento){
-    if (!(filaVazia(fila))){
-        if (fila->inicio == fila->fim){
-            elemento->info = fila->fim->info;
-            free(fila->fim);
-            inicializaFila(fila);
-        }
-        else{
-            elemento->info = fila->fim->info;
-            lista_t* fim = fila->fim;
-            fila->fim = fila->inicio;
-            while (fila->fim->prox != fim){
-                fila->fim = fila->fim->prox;
-            }
-            free(fim);
-            fila->fim->prox = NULL;
-        }
-    } else{
-        printf("Fila vazia!\n");
-    }
+int removeFila(fila_t* fila, int *info){
+	if (!(filaVazia(fila))){
+		*info = fila->inicio->info;
+		if (fila->inicio == fila->fim){
+			free(fila->inicio);
+			inicializaFila(fila);
+		}
+		else{
+			lista_t* fim = fila->inicio;
+			fila->inicio = fila->inicio->prox;
+			free(fim);
+		}
+		return 1;
+	}
+	else{
+		printf("Fila vazia!\n");
+	}
+	return 0;
 }

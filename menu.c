@@ -5,10 +5,12 @@ Autor: Cristofer Oswald */
 #include <stdio.h>
 #include <stdlib.h>
 
+//Nossos includes
 #include "menu.h"
 #include "saga.h"
 #include "util.h"
 
+//Mostra o menu e suas opções e a retorna a entrada do usuário
 int mainMenu(){
 	char op;
 
@@ -38,6 +40,7 @@ int mainMenu(){
 	}
 }
 
+//Lê os dados do jogo (tamanho do tabuleiro e quantidade de tipos de peças)
 void leDados(game *jogo){
 	printf("\n\t\tInsira a largura do tabuleiro: ");
 	scanf(" %d", &jogo->w);

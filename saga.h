@@ -1,4 +1,4 @@
-/*Arquivo header de saga.c
+/*Arquivo header de saga.c. Descrição das funções estão no arquivo .c
 Data: 31/05/2016
 Autor: Cristofer Oswald */
 

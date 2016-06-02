@@ -1,4 +1,4 @@
-/*Arquivo header de menu.c
+/*Arquivo header de menu.c. Descrição das funções estão no arquivo .c
 Data: 31/05/2016
 Autor: Cristofer Oswald */
 

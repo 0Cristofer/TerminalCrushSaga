@@ -6,14 +6,17 @@ Autor: Cristofer */
 #include <stdio.h>
 #include <time.h>
 
+//Nossos includes
 #include "saga.h"
 #include "util.h"
 
+//Função que controla o fluxo do jogo
 void mainGame(game *jogo){
 
 	novoJogo(jogo);
 }
 
+//Cria o tabuleiro com peças aleatórias
 void novoJogo(game *jogo){
 	int i, j;
 	srand(time(NULL));
@@ -29,6 +32,7 @@ void novoJogo(game *jogo){
 	printJogo(jogo);
 }
 
+//Escreve o tabuleiro
 void printJogo(game *jogo){
 	int i, j;
 

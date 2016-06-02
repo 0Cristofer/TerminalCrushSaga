@@ -6,6 +6,7 @@ Autor: Cristofer Oswald */
 #include <stdlib.h>
 #include <time.h>
 
+//Nossos includes
 #include "util.h"
 #include "menu.h"
 #include "saga.h"
@@ -36,7 +37,7 @@ int main(){
 }
 
 void quit(){
-	printf("\n\nAté logo!\n\n");
+	printf("\t\t\n\nAté logo!\n\n");
 	system("sleep 5");
 	system(CLS);
 }
