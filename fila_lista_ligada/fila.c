@@ -33,9 +33,7 @@ void insereFila(fila_t* fila, lista_t* elemento){
 	else{
 		fila->fim->prox = elemento;
 	}
-	printf("1\n");
 	elemento->prox = NULL;
-	printf("2\n");
 	fila->fim = elemento;
 }
 
