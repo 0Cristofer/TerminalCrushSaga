@@ -16,8 +16,11 @@ int mainMenu(){
 
 	system(CLS);
 								
-	printf("\n\n\n\n\n\n\n\t\t\t\t\t\t\tBem vindo ao Terminal Crush Saga!\n");
-	printf("\n\n\t\t\t\t\t\t\t\tMenu Principal\n");
+	printTopo();
+	printLado();
+	printCab();
+	printLado();
+	printf("\n\n\t\t\t\t\t\t\tMenu Principal\n");
 	printf("\n\t\tS - Inicia o jogo\n");
 	printf("\t\tX - Sai do jogo\n");
 	printf("\n\t\t");
@@ -48,4 +51,17 @@ void leDados(game *jogo){
 	scanf(" %d", &jogo->h);
 	printf("\t\tInsira a quantidade de simbolos: ");
 	scanf(" %d", &jogo->n_sym);
+}
+
+void printTopo(){
+	printf("\t\t\t\t\t-----------------------------------------------------------------\n");
+}
+
+void printLado(){
+	printf("\t\t\t\t\t|                                                               |\n");
+	printf("\t\t\t\t\t|                                                               |\n");
+}
+
+void printCab(){
+	printf("\t\t\t\t\t|\t\tT E R M I N A L  C R U S H  S A G A\t\t|\n");
 }

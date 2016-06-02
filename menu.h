@@ -9,5 +9,8 @@ Autor: Cristofer Oswald */
 
 int mainMenu();
 void leDados(game *jogo);
+void printCab();
+void printTopo();
+void printLado();
 
 #endif
