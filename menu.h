@@ -12,5 +12,6 @@ void leDados(game *jogo);
 void printCab();
 void printTopo();
 void printLado();
+void printLogo();
 
 #endif
