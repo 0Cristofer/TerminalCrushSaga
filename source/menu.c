@@ -21,7 +21,7 @@ int mainMenu(){
 	printf(TAB"|X - Sai do jogo                                                                                      |\n");
 	printLado(14);
 	printTer();
-	moveCursor(15, 26);
+	moveCursor(14, 26);
 	scanf(" %c", &op);
 
 	system(CLS);
@@ -49,17 +49,17 @@ void leDados(game *jogo){
 	printf(TAB"|Insira a quantidade de simbolos:                                                                     |\n");
 	printLado(13);
 	printTer();
-	moveCursor(12, 57);
+	moveCursor(11, 57);
 	scanf(" %d", &jogo->w);
-	moveCursor(13, 56);
+	moveCursor(12, 56);
 	scanf(" %d", &jogo->h);
-	moveCursor(14, 59);
+	moveCursor(13, 59);
 	scanf(" %d", &jogo->n_sym);
 }
 
 void printTopo(){
 	printTer();
-	printLado(2);
+	printLado(1);
         printLogo();
         printLado(2);
 }
@@ -77,7 +77,7 @@ void printLogo(){
 	printf(TAB"|   / /____  _________ ___  (_)___  ____ _/ /  ____________  _______/ /_     _________ _____ _____ _  |\n");
 	printf(TAB"|  / __/ _ \\/ ___/ __ `__ \\/ / __ \\/ __ `/ /  / ___/ ___/ / / / ___/ __ \\   / ___/ __ `/ __ `/ __ `/  |\n");
 	printf(TAB"| / /_/  __/ /  / / / / / / / / / / /_/ / /  / /__/ /  / /_/ (__  ) / / /  (__  ) /_/ / /_/ / /_/ /   |\n");
-	printf(TAB"| \\__/\\___/_/  /_/ /_/ /_/_/_/ /_/\\__,_/_/   \\___/_/   \\____/____/_/ /_/  /____/\\__,_/\\__, /\\__,_/    |\n"); 
+	printf(TAB"| \\__/\\___/_/  /_/ /_/ /_/_/_/ /_/\\__,_/_/   \\___/_/   \\____/____/_/ /_/  /____/\\__,_/\\__, /\\__,_/    |\n");
 	printf(TAB"|                                                                                     /____/          |\n");
 }
 
@@ -101,6 +101,10 @@ void moveCursor(int x, int y){
 	printf("\033[%d;%dH", x, y);
 }
 
+int inGameMenu(){
+
+}
+
 void printJogo(game *jogo){
         int i, j, aux;
 
@@ -116,13 +120,23 @@ void printJogo(game *jogo){
 			printf(" ");
 		}
 		for(j = 0; j < jogo->w; j++){
-			printf("%d  ", jogo->board[i][j]);
+			printf("%d  ", jogo->board[i][j].type);
 		}
 		for(j = 0; j < (((LARG - (jogo->w * 3))/2)); j++){
 			printf(" ");
 		}
 		printf("|\n");
 	}
+	printLado(2);
+}
 
+int printBoard(game* jogo){
+	int opt;
+	printTopo();
+	printJogo(jogo);
+	printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                                       |\n");
 	printTer();
+	//moveCursor(35, 50);
+	scanf(" %d", &opt);
+	return opt;
 }

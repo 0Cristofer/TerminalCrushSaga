@@ -37,7 +37,8 @@ int main(){
 }
 
 void quit(){
-	printf("\t\t\n\nAté logo!\n\n");
+	printf(TAB"\n\nTodos os direitos reservados a Bruno Cesar & Cristofer Oswald, 2016\n\n");
 	system(SLEEP "5");
 	system(CLS);
+	exit(1);
 }

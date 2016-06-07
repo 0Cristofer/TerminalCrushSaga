@@ -38,7 +38,7 @@ void insereFila(fila_t* fila, lista_t* elemento){
 }
 
 /* remove */
-int removeFila(fila_t* fila, int *info){
+int removeFila(fila_t* fila, pedra *info){
 	if (!(filaVazia(fila))){
 		*info = fila->inicio->info;
 		if (fila->inicio == fila->fim){

@@ -6,6 +6,7 @@ Autor: Cristofer Oswald */
 #define MENU
 
 #include "util.h"
+#include "saga.h"
 
 int mainMenu();
 
@@ -16,6 +17,8 @@ void printLado(int n);
 void printLogo();
 void printTer();
 void moveCursor(int x, int y);
+//int inGameMenu();
 void printJogo(game *jogo);
+int printBoard(game *jogo);
 
 #endif

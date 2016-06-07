@@ -7,8 +7,21 @@ Autor: Cristofer Oswald */
 
 #include "util.h"
 
-void mainGame(game *jogo);
+typedef struct{
+    int type;
+    int mark;
+} pedra;
 
+typedef struct{
+    pedra **board;
+	int w;
+	int h;
+	int n_sym;
+} game;
+
+void mainGame(game *jogo);
 void novoJogo(game *jogo);
+void jogada(game *jogo);
+
 
 #endif

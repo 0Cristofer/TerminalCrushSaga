@@ -14,11 +14,8 @@ Autor: Cristofer Oswald */
 #define LARG 101
 
 typedef struct{
-        int **board;
-	int w;
-	int h;
-	int n_sym;
-}game;
+    int x,y;
+} coord;
 
 void quit();
 
