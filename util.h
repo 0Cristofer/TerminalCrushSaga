@@ -11,9 +11,13 @@ Autor: Cristofer Oswald */
 #define CLS "clear" //Para mudança entre OSs
 #define SLEEP "sleep"
 #define TAB "\t\t\t"
+#define LARG 101
 
 typedef struct{
-        int **board, w, h, n_sym;
+        int **board;
+	int w;
+	int h;
+	int n_sym;
 }game;
 
 void quit();

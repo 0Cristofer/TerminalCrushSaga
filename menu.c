@@ -15,7 +15,6 @@ int mainMenu(){
 	char op;
 
 	system(CLS);
-
 	printTopo();
 	printf(TAB"|                                         Menu Principal                                              |\n");
 	printf(TAB"|S - Inicia o jogo                                                                                    |\n");
@@ -109,11 +108,17 @@ void printJogo(game *jogo){
 
 	printTopo();
 
+	//printf("width = %d\n larg = %d\n", jogo->w, LARG);
         for(i = 0; i < jogo->h; i++){
                 printf(TAB"|");
                 for(j = 0; j < jogo->w; j++){
                         printf("%d  ", jogo->board[i][j]);
                 }
-                printf("                                 |\n");
+		for(j = 0; j < (LARG - (jogo->w * 3)); j++){
+			printf(" ");
+		}
+                printf("|\n");
         }
+
+	printTer();
 }
