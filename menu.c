@@ -102,23 +102,27 @@ void moveCursor(int x, int y){
 }
 
 void printJogo(game *jogo){
-        int i, j;
+        int i, j, aux;
 
         system(CLS);
 
 	printTopo();
 
-	//printf("width = %d\n larg = %d\n", jogo->w, LARG);
-        for(i = 0; i < jogo->h; i++){
-                printf(TAB"|");
-                for(j = 0; j < jogo->w; j++){
-                        printf("%d  ", jogo->board[i][j]);
-                }
-		for(j = 0; j < (LARG - (jogo->w * 3)); j++){
+	aux = (jogo->w%2) == 0 ? 1 : 0;
+
+	for(i = 0; i < jogo->h; i++){
+		printf(TAB"|");
+		for(j = 0; j < (((LARG - (jogo->w * 3))/2) + aux); j++){
 			printf(" ");
 		}
-                printf("|\n");
-        }
+		for(j = 0; j < jogo->w; j++){
+			printf("%d  ", jogo->board[i][j]);
+		}
+		for(j = 0; j < (((LARG - (jogo->w * 3))/2)); j++){
+			printf(" ");
+		}
+		printf("|\n");
+	}
 
 	printTer();
 }
