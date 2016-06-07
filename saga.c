@@ -9,6 +9,7 @@ Autor: Cristofer */
 //Nossos includes
 #include "saga.h"
 #include "util.h"
+#include "menu.h"
 
 //Função que controla o fluxo do jogo
 void mainGame(game *jogo){
@@ -30,19 +31,4 @@ void novoJogo(game *jogo){
 	}
 
 	printJogo(jogo);
-}
-
-//Escreve o tabuleiro
-void printJogo(game *jogo){
-	int i, j;
-
-	system(CLS);
-
-	for(i = 0; i < jogo->h; i++){
-		printf("\t\t\t\t\t\t\t");
-		for(j = 0; j < jogo->w; j++){
-			printf("%d  ", jogo->board[i][j]);
-		}
-		printf("\n");
-	}
 }

@@ -8,10 +8,14 @@ Autor: Cristofer Oswald */
 #include "util.h"
 
 int mainMenu();
+
 void leDados(game *jogo);
 void printCab();
 void printTopo();
-void printLado();
+void printLado(int n);
 void printLogo();
+void printTer();
+void moveCursor(int x, int y);
+void printJogo(game *jogo);
 
 #endif

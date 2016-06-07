@@ -11,6 +11,4 @@ void mainGame(game *jogo);
 
 void novoJogo(game *jogo);
 
-void printJogo(game *jogo);
-
 #endif

@@ -1,4 +1,4 @@
- /*Biblioteca responsável por administrar o menu do aplicativo Terminal Crush Saga
+/*Biblioteca responsável por administrar o menu do aplicativo Terminal Crush Saga
 Data: 31/05/2016
 Autor: Cristofer Oswald */
 
@@ -16,15 +16,13 @@ int mainMenu(){
 
 	system(CLS);
 
-	//printTopo();
-	//printLado();
-	//printCab();
-	//printLado();
-	printLogo();
-	printf("\n\n\t\t\t\t\t\t\tMenu Principal\n");
-	printf("\n\t\tS - Inicia o jogo\n");
-	printf("\t\tX - Sai do jogo\n");
-	printf("\n\t\t");
+	printTopo();
+	printf(TAB"|                                         Menu Principal                                              |\n");
+	printf(TAB"|S - Inicia o jogo                                                                                    |\n");
+	printf(TAB"|X - Sai do jogo                                                                                      |\n");
+	printLado(14);
+	printTer();
+	moveCursor(15, 26);
 	scanf(" %c", &op);
 
 	system(CLS);
@@ -46,36 +44,42 @@ int mainMenu(){
 
 //Lê os dados do jogo (tamanho do tabuleiro e quantidade de tipos de peças)
 void leDados(game *jogo){
-	printf("\n\t\tInsira a largura do tabuleiro: ");
+	printTopo();
+	printf(TAB"|Insira a largura do tabuleiro:                                                                       |\n");
+	printf(TAB"|Insira a altura do tabuleiro:                                                                        |\n");
+	printf(TAB"|Insira a quantidade de simbolos:                                                                     |\n");
+	printLado(13);
+	printTer();
+	moveCursor(12, 57);
 	scanf(" %d", &jogo->w);
-	printf("\t\tInsira a altura do tabuleiro: ");
+	moveCursor(13, 56);
 	scanf(" %d", &jogo->h);
-	printf("\t\tInsira a quantidade de simbolos: ");
+	moveCursor(14, 59);
 	scanf(" %d", &jogo->n_sym);
 }
 
 void printTopo(){
-	printf("\t\t\t\t\t-----------------------------------------------------------------\n");
+	printTer();
+	printLado(2);
+        printLogo();
+        printLado(2);
 }
 
-void printLado(){
-	printf("\t\t\t\t\t|                                                               |\n");
-	printf("\t\t\t\t\t|                                                               |\n");
-}
-
-void printCab(){
-	printf("\t\t\t\t\t|\t\tT E R M I N A L  C R U S H  S A G A\t\t|\n");
+void printLado(int n){
+	int i;
+	for(i = 0; i < n; i++){
+		printf(TAB"|                                                                                                     |\n");
+	}
 }
 
 void printLogo(){
 
- printf("       __                      _             __                        __                              \n");
- printf("      / /____  _________ ___  (_)___  ____ _/ /  ____________  _______/ /_     _________ _____ _____ _ \n");
- printf("     / __/ _ \\/ ___/ __ `__ \\/ / __ \\/ __ `/ /  / ___/ ___/ / / / ___/ __ \\   / ___/ __ `/ __ `/ __ `/ \n");
- printf("    / /_/  __/ /  / / / / / / / / / / /_/ / /  / /__/ /  / /_/ (__  ) / / /  (__  ) /_/ / /_/ / /_/ /  \n");
- printf("    \\__/\\___/_/  /_/ /_/ /_/_/_/ /_/\\__,_/_/   \\___/_/   \\____/____/_/ /_/  /____/\\__,_/\\__, /\\__,_/   \n"); 
- printf("                                                                                       /____/          \n");
-
+	printf(TAB"|    __                      _             __                        __                               |\n");
+	printf(TAB"|   / /____  _________ ___  (_)___  ____ _/ /  ____________  _______/ /_     _________ _____ _____ _  |\n");
+	printf(TAB"|  / __/ _ \\/ ___/ __ `__ \\/ / __ \\/ __ `/ /  / ___/ ___/ / / / ___/ __ \\   / ___/ __ `/ __ `/ __ `/  |\n");
+	printf(TAB"| / /_/  __/ /  / / / / / / / / / / /_/ / /  / /__/ /  / /_/ (__  ) / / /  (__  ) /_/ / /_/ / /_/ /   |\n");
+	printf(TAB"| \\__/\\___/_/  /_/ /_/ /_/_/_/ /_/\\__,_/_/   \\___/_/   \\____/____/_/ /_/  /____/\\__,_/\\__, /\\__,_/    |\n"); 
+	printf(TAB"|                                                                                     /____/          |\n");
 }
 
 void printLogo1080(){
@@ -88,4 +92,28 @@ void printLogo1080(){
 	printf(" |           \\|__|  \\|_______|\\|__|\\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\|__|\\|__|\\|_______|      \\|_______|\\|__|\\|__|\\|_______|\\_________\\|__|\\|__|       |\\_________\\|__|\\|__|\\|_______|\\|__|\\|__|  | \n");
 	printf(" |                                                                                                                            \\|_________|                \\|_________|                               | \n");
 	printf("\n\n");
+}
+
+void printTer(){
+	printf(TAB"-------------------------------------------------------------------------------------------------------\n");
+}
+
+void moveCursor(int x, int y){
+	printf("\033[%d;%dH", x, y);
+}
+
+void printJogo(game *jogo){
+        int i, j;
+
+        system(CLS);
+
+	printTopo();
+
+        for(i = 0; i < jogo->h; i++){
+                printf(TAB"|");
+                for(j = 0; j < jogo->w; j++){
+                        printf("%d  ", jogo->board[i][j]);
+                }
+                printf("                                 |\n");
+        }
 }

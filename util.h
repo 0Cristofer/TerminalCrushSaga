@@ -9,6 +9,8 @@ Autor: Cristofer Oswald */
 #define FALSE 0
 
 #define CLS "clear" //Para mudança entre OSs
+#define SLEEP "sleep"
+#define TAB "\t\t\t"
 
 typedef struct{
         int **board, w, h, n_sym;
