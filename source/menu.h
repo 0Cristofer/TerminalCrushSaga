@@ -20,5 +20,6 @@ void printTer();
 void moveCursor(int x, int y);
 //int inGameMenu();
 void printBoard(game *jogo);
+void leCoord(int h, coord *a, coord *b);
 
 #endif

@@ -64,21 +64,39 @@ void novoJogo(game *jogo){
 
 //Controla a jogada
 void jogada(game *jogo){
-		coord a, b;
+	int controle = FALSE;
+	coord a, b;
 
-		moveCursor((jogo->h + 16), 26);
-		printf(" , | , ");
-		moveCursor((jogo->h + 16), 26);
-		scanf(" %d", &a.x);
-		moveCursor((jogo->h + 16), 28);
-		scanf(" %d", &a.y);
-		moveCursor((jogo->h + 16), 30);
-                scanf(" %d", &b.x);
-                moveCursor((jogo->h + 16), 32);
-                scanf(" %d", &b.y);
-		//TODO ANTI-TROLL SYSTEM
+	while(controle == FALSE){
+		leCoord(jogo->h, &a, &b);
+		if(verifica(jogo, a, b)){
+			if(testaJogada(jogo, a, b)){
+				//VAI SER LOCO
+				controle = TRUE;
+			}
+			else{
+				//PRINTA QUE DEU ERRADO
+			}
+		}
+		else{
+			//PRINTA QUE NAO PODE
+		}
+	}
+}
 
+int verifica(game *jogo, coord a, coord b){
+	if(
+	   ((a.x < jogo->w) && (a.x >= 0) && (a.y < jogo->h) && (a.y >= 0) &&	//Verifica limites em altura e largura
+            (b.x < jogo->w) && (b.x >= 0) && (b.y < jogo->h) && (b.y >= 0)) && 	// ||       ||
+	   (!((a.x == b.x) && (a.y == b.y)))&& 					//Verifica se as coordenadas não são iguais
+	   (
+	     ( (a.x == b.x) && ( (a.y == (b.y - 1)) || (a.y == (b.y + 1)) ) ) ||//Verifica se as coordenadas são adjacentes
+	     ( (a.y == b.y) && ( (a.x == (b.x - 1)) || (a.x == (b.x + 1)) ) ) ) // ||       ||
+	   ){
+		return TRUE;
+	}
+	return FALSE;
+}
 
-
-
+int testaJogada(game *jogo, coord a, coord b){
 }

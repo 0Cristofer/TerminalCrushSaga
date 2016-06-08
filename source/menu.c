@@ -121,21 +121,63 @@ void printBoard(game *jogo){
 
 	par = (jogo->w%2) == 0 ? -1 : 0; //Caso seja par diminui um espaçamento
 
-	for(i = 0; i < jogo->h; i++){
+	for(i = 0; i < (jogo->h + 2); i++){
 		printf(TAB"|"); 
 		cond = (LARG - (jogo->w * 3)) / 2; //Quantidade de espaços
-		dig = i > 9 ? -1 : 0; //Caso seja um número com mais de dois dígitos
+		dig = i > 11 ? -1 : 0; //Caso seja um número com mais de dois dígitos
+
 		for(j = 0; j < (cond + dig + par + 1); j++){
-			printf(" ");
+			printf("@");
 		}
+
 		for(j = 0; j < jogo->w; j++){
-			if(j == 0){
-				printf("%d| ", i);
+			if(i == 0){
+				if(j == 0){
+					printf("  %d", j);
+				}
+				else{
+					printf("%d  ", j);
+				}
 			}
-			printf("%d  ", jogo->board[i][j].type);
+			else if(i == 1){
+				if(j == (jogo->w - 1)){
+					printf("-  ");
+				}
+				else{
+					printf("---");
+				}
+			}
+			else{
+				if(j == 0){
+					printf("%d| ", (i-2));
+				}
+				else{
+					printf("%d  ", jogo->board[(i-2)][j].type);
+				}	
+			}
+			/*if(j == 0) {
+				if(i > 1){
+					printf("%d| ", (i-2));
+				}
+				else if(i == 1){
+					printf("---");
+					}
+				else{
+					printf("   ");
+				}
+			}
+			if((i == 0)){
+				printf("%d  ", j);
+			}
+			else if((i == 1) && (j > 0)){
+				printf("---");
+			}
+			else if(i > 1){
+				printf("%d  ", jogo->board[(i-2)][j].type);
+			}*/
 		}
 		for(j = 0; j < cond; j++){
-			printf(" ");
+			printf("@");
 		}
 		printf("|\n");
 	}
@@ -154,7 +196,20 @@ int printJogo(game* jogo){
 	printTer();
 	printLado(2);
 	printTer();
-	moveCursor((jogo->h + 15), 26);
+	moveCursor((jogo->h + 17), 26);
 	scanf(" %d", &opt);
 	return opt;
+}
+
+void leCoord(int h, coord *a, coord *b){
+	moveCursor((h + 18), 26);
+	printf(" , | , ");
+	moveCursor((h + 18), 26);
+	scanf(" %d", &a->x);
+	moveCursor((h + 18), 28);
+	scanf(" %d", &a->y);
+	moveCursor((h + 18), 30);
+	scanf(" %d", &b->x);
+	moveCursor((h + 18), 32);
+	scanf(" %d", &b->y);
 }
