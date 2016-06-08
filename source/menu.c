@@ -127,19 +127,20 @@ void printBoard(game *jogo){
 		dig = i > 11 ? -1 : 0; //Caso seja um número com mais de dois dígitos
 
 		for(j = 0; j < (cond + dig + par + 1); j++){
-			printf("@");
+			printf(" ");
 		}
 
 		for(j = 0; j < jogo->w; j++){
 			if(i == 0){
 				if(j == 0){
-					printf("  %d", j);
+					printf("   ");
 				}
-				else{
-					printf("%d  ", j);
-				}
+				printf("%d  ", j);
 			}
 			else if(i == 1){
+				if(j == 0){
+					printf("---");
+				}
 				if(j == (jogo->w - 1)){
 					printf("-  ");
 				}
@@ -151,33 +152,11 @@ void printBoard(game *jogo){
 				if(j == 0){
 					printf("%d| ", (i-2));
 				}
-				else{
-					printf("%d  ", jogo->board[(i-2)][j].type);
-				}	
-			}
-			/*if(j == 0) {
-				if(i > 1){
-					printf("%d| ", (i-2));
-				}
-				else if(i == 1){
-					printf("---");
-					}
-				else{
-					printf("   ");
-				}
-			}
-			if((i == 0)){
-				printf("%d  ", j);
-			}
-			else if((i == 1) && (j > 0)){
-				printf("---");
-			}
-			else if(i > 1){
 				printf("%d  ", jogo->board[(i-2)][j].type);
-			}*/
+			}
 		}
 		for(j = 0; j < cond; j++){
-			printf("@");
+			printf(" ");
 		}
 		printf("|\n");
 	}
