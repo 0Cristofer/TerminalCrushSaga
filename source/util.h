@@ -11,11 +11,12 @@ Autor: Cristofer Oswald */
 #define CLS "clear" //Para mudança entre OSs
 #define SLEEP "sleep"
 #define TAB "\t\t\t"
-#define LARG 101
+#define LARG 98
 
+//Representa uma coordenada no tabuleiro
 typedef struct{
-    int x,y;
-} coord;
+	int x, y;
+}coord;
 
 void quit();
 

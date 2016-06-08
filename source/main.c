@@ -11,6 +11,7 @@ autor: Cristofer Oswald */
 #include "menu.h"
 #include "saga.h"
 
+//Função principal
 int main(){
 	int menu;
 	game *jogo;
@@ -30,15 +31,16 @@ int main(){
 			break;
 	}
 
-	getchar();
-	getchar();
+	quit();
 
 	return 0;
 }
 
+//Limpa a tela e mostra os créditos
 void quit(){
-	printf(TAB"\n\nTodos os direitos reservados a Bruno Cesar & Cristofer Oswald, 2016\n\n");
-	system(SLEEP "5");
 	system(CLS);
-	exit(1);
+	printf("\n\n\n"TAB"Todos os direitos reservados a Bruno Cesar & Cristofer Oswald, 2016\n\n");
+	system(SLEEP " 2");
+	system(CLS);
+	//exit(1);
 }

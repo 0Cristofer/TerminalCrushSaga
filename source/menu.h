@@ -9,6 +9,7 @@ Autor: Cristofer Oswald */
 #include "saga.h"
 
 int mainMenu();
+int printJogo(game *jogo);
 
 void leDados(game *jogo);
 void printCab();
@@ -18,7 +19,6 @@ void printLogo();
 void printTer();
 void moveCursor(int x, int y);
 //int inGameMenu();
-void printJogo(game *jogo);
-int printBoard(game *jogo);
+void printBoard(game *jogo);
 
 #endif

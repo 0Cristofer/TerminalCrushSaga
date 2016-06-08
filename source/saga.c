@@ -16,27 +16,36 @@ void mainGame(game *jogo){
 	int opt;
 
 	novoJogo(jogo);
-
-	do{
-		opt = printBoard(jogo);
+	
+	
+	void inGame(){
+		opt = printJogo(jogo);
 
 		switch (opt) {
 			case 1:
 				jogada(jogo);
+				inGame();
 				break;
 
 			case 2:
 				//Shuffle
+				inGame();
 				break;
 
 			case 3:
 				break;
 
 			default:
+				moveCursor((jogo->h + 16), 26);
 				printf("Opção inválida!");
+				getchar();
+				getchar();
+				inGame();
 				break;
 		}
-	} while (opt !=3);
+	}
+
+	inGame();
 }
 
 //Cria o tabuleiro com peças aleatórias
@@ -53,12 +62,20 @@ void novoJogo(game *jogo){
 	}
 }
 
+//Controla a jogada
 void jogada(game *jogo){
-		coord a,b;
-		printf(TAB);
-		scanf(" %d %d", &a.x, &a.y);
-		printf(TAB);
-		scanf(" %d %d", &b.x, &b.y);
+		coord a, b;
+
+		moveCursor((jogo->h + 16), 26);
+		printf(" , | , ");
+		moveCursor((jogo->h + 16), 26);
+		scanf(" %d", &a.x);
+		moveCursor((jogo->h + 16), 28);
+		scanf(" %d", &a.y);
+		moveCursor((jogo->h + 16), 30);
+                scanf(" %d", &b.x);
+                moveCursor((jogo->h + 16), 32);
+                scanf(" %d", &b.y);
 		//TODO ANTI-TROLL SYSTEM
 
 

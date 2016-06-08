@@ -57,6 +57,7 @@ void leDados(game *jogo){
 	scanf(" %d", &jogo->n_sym);
 }
 
+//Escreve o topo do jogo (é chamado toda vez que a tela é limpa)
 void printTopo(){
 	printTer();
 	printLado(1);
@@ -64,6 +65,7 @@ void printTopo(){
         printLado(2);
 }
 
+//Escreve n '|'
 void printLado(int n){
 	int i;
 	for(i = 0; i < n; i++){
@@ -71,6 +73,7 @@ void printLado(int n){
 	}
 }
 
+//Logo do jogo
 void printLogo(){
 
 	printf(TAB"|    __                      _             __                        __                               |\n");
@@ -81,6 +84,7 @@ void printLogo(){
 	printf(TAB"|                                                                                     /____/          |\n");
 }
 
+//Logo para 1080p
 void printLogo1080(){
 	printf(" |    _________  _______   ________  _____ ______   ___  ________   ________  ___             ________  ________  ___  ___  ________  ___  ___          ________  ________  ________  ________       | \n");
 	printf(" |   |\\___   ___\\\\  ___ \\ |\\   __  \\|\\   _ \\  _   \\|\\  \\|\\   ___  \\|\\   __  \\|\\  \\           |\\   ____\\|\\   __  \\|\\  \\|\\  \\|\\   ____\\|\\  \\|\\  \\        |\\   ____\\|\\   __  \\|\\   ____\\|\\   __  \\      | \n");
@@ -93,10 +97,12 @@ void printLogo1080(){
 	printf("\n\n");
 }
 
+//Escreve o 'terminal', tanto do superior quanto inferior
 void printTer(){
 	printf(TAB"-------------------------------------------------------------------------------------------------------\n");
 }
 
+//Move o cursor para a linha x, coluna y
 void moveCursor(int x, int y){
 	printf("\033[%d;%dH", x, y);
 }
@@ -105,24 +111,30 @@ int inGameMenu(){
 
 }
 
-void printJogo(game *jogo){
-        int i, j, aux;
+//Escreve o tabuleiro centralizado
+void printBoard(game *jogo){
+        int i, j, cond, par, dig;
 
         system(CLS);
 
 	printTopo();
 
-	aux = (jogo->w%2) == 0 ? 1 : 0;
+	par = (jogo->w%2) == 0 ? -1 : 0; //Caso seja par diminui um espaçamento
 
 	for(i = 0; i < jogo->h; i++){
-		printf(TAB"|");
-		for(j = 0; j < (((LARG - (jogo->w * 3))/2) + aux); j++){
+		printf(TAB"|"); 
+		cond = (LARG - (jogo->w * 3)) / 2; //Quantidade de espaços
+		dig = i > 9 ? -1 : 0; //Caso seja um número com mais de dois dígitos
+		for(j = 0; j < (cond + dig + par + 1); j++){
 			printf(" ");
 		}
 		for(j = 0; j < jogo->w; j++){
+			if(j == 0){
+				printf("%d| ", i);
+			}
 			printf("%d  ", jogo->board[i][j].type);
 		}
-		for(j = 0; j < (((LARG - (jogo->w * 3))/2)); j++){
+		for(j = 0; j < cond; j++){
 			printf(" ");
 		}
 		printf("|\n");
@@ -130,13 +142,19 @@ void printJogo(game *jogo){
 	printLado(2);
 }
 
-int printBoard(game* jogo){
+//Escreve todo o jogo (topo, tabuleiro, opções, etc)
+int printJogo(game* jogo){
 	int opt;
+
 	printTopo();
-	printJogo(jogo);
+	printBoard(jogo);
+
 	printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                                       |\n");
+
 	printTer();
-	//moveCursor(35, 50);
+	printLado(2);
+	printTer();
+	moveCursor((jogo->h + 15), 26);
 	scanf(" %d", &opt);
 	return opt;
 }

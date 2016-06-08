@@ -11,13 +11,15 @@ SRCS = $(SR)main.c $(SR)saga.c $(SR)menu.c $(SR)fila_lista_ligada/fila.c
 OBJS = $(O)main.o $(O)saga.o $(O)menu.o $(O)fila.o
 EXE = saga
 
-all : $(SRCS) $(EXE)
+all : $(O) $(SRCS) $(EXE)
 
 $(EXE) : $(OBJS)
 	$(CC) -pg $(OBJS) -o $(EXE)
 
-$(O)main.o : $(SR)main.c
+$(O) : 
 	$(MKDIR) $(O)
+
+$(O)main.o : $(SR)main.c	
 	$(CC) $(CFLAGS) $(SR)main.c -o $(O)main.o
 
 $(O)saga.o : $(SR)saga.c

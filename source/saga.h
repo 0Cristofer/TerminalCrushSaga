@@ -7,17 +7,19 @@ Autor: Cristofer Oswald */
 
 #include "util.h"
 
+//Struct que representa uma peça do tabuleiro
 typedef struct{
-    int type;
-    int mark;
-} pedra;
+	int type;
+	int mark;
+}pedra;
 
+//Representa os dados do jogo atual
 typedef struct{
-    pedra **board;
+	pedra **board;
 	int w;
 	int h;
 	int n_sym;
-} game;
+}game;
 
 void mainGame(game *jogo);
 void novoJogo(game *jogo);
