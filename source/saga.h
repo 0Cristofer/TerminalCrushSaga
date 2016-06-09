@@ -27,8 +27,9 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b);
 int jogada(game_t *jogo);
 int escolhePedra(game_t *jogo, coord_t a);
 int *ordena(double *vet, int tam);
+int preencheBoard(game_t *jogo);
 
 void mainGame(game_t *jogo);
 void novoJogo(game_t *jogo);
-
+void limpaMark(game_t *jogo);
 #endif

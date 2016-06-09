@@ -11,7 +11,6 @@
 
 /* inicializa */
 void inicializaFila(fila_t* fila){
-	fila = malloc(sizeof(fila_t));
 	fila->inicio = NULL;
 	fila->fim = NULL;
 }

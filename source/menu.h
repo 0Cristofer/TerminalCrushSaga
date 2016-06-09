@@ -9,7 +9,7 @@ Autor: Cristofer Oswald */
 #include "saga.h"
 
 int mainMenu();
-int printJogo(game_t *jogo);
+int printJogo(game_t *jogo, int op);
 int confirma(int x, int y);
 
 void leDados(game_t *jogo);
