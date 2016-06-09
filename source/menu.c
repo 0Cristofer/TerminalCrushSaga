@@ -170,7 +170,7 @@ void printBoard(game_t *jogo){
 
 //Escreve todo o jogo (topo, tabuleiro, opções, etc)
 int printJogo(game_t* jogo, int op){
-	int opt;
+	int opt = 2;
 
 	system(CLS);
 	printTopo();
@@ -183,8 +183,10 @@ int printJogo(game_t* jogo, int op){
 	printTer();
 	printLado(2);
 	printTer();
-	moveCursor((jogo->h + 18), 26);
-	scanf(" %d", &opt);
+	if(op){
+		moveCursor((jogo->h + 18), 26);
+		scanf(" %d", &opt);
+	}
 	return opt;
 }
 
