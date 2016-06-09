@@ -22,9 +22,11 @@ typedef struct{
 	int n_sym;
 }game_t;
 
-int verifica(game_t *jogo, coord a, coord b);
-int testaJogada(game_t *jogo, coord a, coord b);
+int verifica(game_t *jogo, coord_t a, coord_t b);
+int testaJogada(game_t *jogo, coord_t a, coord_t b);
 int jogada(game_t *jogo);
+int escolhePedra(game_t *jogo, coord_t a);
+int *ordena(double *vet, int tam);
 
 void mainGame(game_t *jogo);
 void novoJogo(game_t *jogo);

@@ -152,7 +152,7 @@ void printBoard(game_t *jogo){
 				if(j == 0){
 					printf("%d| ", (i-2-d));
 				}
-				printf("%d  ", jogo->board[(i-2-d)][j].type);
+				printf("%d  ", (jogo->board[(i-2-d)][j].type + 1));
 			}
 		}
 		for(j = 0; j < cond; j++){

@@ -9,17 +9,17 @@ Autor: Cristofer Oswald */
 #include "saga.h"
 
 int mainMenu();
-int printJogo(game *jogo);
+int printJogo(game_t *jogo);
 int confirma(int x, int y);
 
-void leDados(game *jogo);
+void leDados(game_t *jogo);
 void printCab();
 void printTopo();
 void printLado(int n);
 void printLogo();
 void printTer();
 void moveCursor(int x, int y);
-void printBoard(game *jogo);
+void printBoard(game_t *jogo);
 void leCoord(int h, coord_t *a, coord_t *b);
 
 #endif
