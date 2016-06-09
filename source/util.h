@@ -14,9 +14,10 @@ Autor: Cristofer Oswald */
 #define LARG 98
 
 //Representa uma coordenada no tabuleiro
-typedef struct{
+typedef struct coord coord_t
+struct coord{
 	int x, y;
-}coord;
+};
 
 void quit();
 

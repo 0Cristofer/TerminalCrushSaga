@@ -11,21 +11,22 @@ Autor: Cristofer Oswald */
 typedef struct{
 	int type;
 	int mark;
-}pedra;
+	coord_t coord;
+}pedra_t;
 
 //Representa os dados do jogo atual
 typedef struct{
-	pedra **board;
+	pedra_t **board;
 	int w;
 	int h;
 	int n_sym;
-}game;
+}game_t;
 
-int verifica(game *jogo, coord a, coord b);
-int testaJogada(game *jogo, coord a, coord b);
+int verifica(game_t *jogo, coord a, coord b);
+int testaJogada(game_t *jogo, coord a, coord b);
+int jogada(game_t *jogo);
 
-void mainGame(game *jogo);
-void novoJogo(game *jogo);
-void jogada(game *jogo);
+void mainGame(game_t *jogo);
+void novoJogo(game_t *jogo);
 
 #endif

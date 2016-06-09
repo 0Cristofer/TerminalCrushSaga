@@ -12,9 +12,9 @@
 #include <stdlib.h>
 #include "./../saga.h"
 
-typedef struct lista lista_t; //generic
+typedef struct lista lista_t;
 struct lista{
-    pedra info;
+    pedra_t info;
     lista_t* prox;
 };
 
@@ -27,6 +27,6 @@ struct fila{
 void inicializaFila(fila_t* fila);
 int filaVazia(fila_t* fila);
 void insereFila(fila_t* fila, lista_t* elemento);
-int removeFila(fila_t* fila, pedra* elemento);
+int removeFila(fila_t* fila, pedra_t* elemento);
 
 #endif /* __FILA_H */

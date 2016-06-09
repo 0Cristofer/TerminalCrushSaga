@@ -10,6 +10,7 @@ Autor: Cristofer Oswald */
 
 int mainMenu();
 int printJogo(game *jogo);
+int confirma(int x, int y);
 
 void leDados(game *jogo);
 void printCab();
@@ -18,8 +19,7 @@ void printLado(int n);
 void printLogo();
 void printTer();
 void moveCursor(int x, int y);
-//int inGameMenu();
 void printBoard(game *jogo);
-void leCoord(int h, coord *a, coord *b);
+void leCoord(int h, coord_t *a, coord_t *b);
 
 #endif

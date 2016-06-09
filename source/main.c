@@ -14,9 +14,9 @@ autor: Cristofer Oswald */
 //Função principal
 int main(){
 	int menu;
-	game *jogo;
+	game_t *jogo;
 
-	jogo = malloc(sizeof(game));
+	jogo = malloc(sizeof(game_t));
 	menu = mainMenu();
 
 	switch(menu){

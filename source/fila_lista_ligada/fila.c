@@ -11,6 +11,7 @@
 
 /* inicializa */
 void inicializaFila(fila_t* fila){
+	fila = malloc(sizeof(fila_t));
 	fila->inicio = NULL;
 	fila->fim = NULL;
 }
@@ -26,7 +27,11 @@ int filaVazia(fila_t* fila){
 }
 
 /* insere */
-void insereFila(fila_t* fila, lista_t* elemento){
+void insereFila(fila_t* fila, pedra_t pedra){
+	lista_t* elemento;
+	elemento = malloc(sizeof(lista_t));
+	elemento->info = pedra;
+
 	if (filaVazia(fila)){
 		fila->inicio = elemento;
 	}
@@ -38,7 +43,7 @@ void insereFila(fila_t* fila, lista_t* elemento){
 }
 
 /* remove */
-int removeFila(fila_t* fila, pedra *info){
+int removeFila(fila_t* fila, pedra_t *info){
 	if (!(filaVazia(fila))){
 		*info = fila->inicio->info;
 		if (fila->inicio == fila->fim){
