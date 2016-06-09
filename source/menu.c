@@ -152,7 +152,12 @@ void printBoard(game_t *jogo){
 				if(j == 0){
 					printf("%d| ", (i-2-d));
 				}
-				printf("%d  ", jogo->board[(i-2-d)][j].type);
+				if (jogo->board[(i-2-d)][j].type == -1){
+					printf("   ");
+
+				} else{
+					printf("%d  ", (jogo->board[(i-2-d)][j].type + 1));
+				}
 			}
 		}
 		for(j = 0; j < cond; j++){
@@ -164,14 +169,16 @@ void printBoard(game_t *jogo){
 }
 
 //Escreve todo o jogo (topo, tabuleiro, opções, etc)
-int printJogo(game_t* jogo){
+int printJogo(game_t* jogo, int op){
 	int opt;
 
 	system(CLS);
 	printTopo();
 	printBoard(jogo);
 
-	printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                                       |\n");
+	if(op){
+		printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                                       |\n");
+	}
 
 	printTer();
 	printLado(2);
