@@ -11,6 +11,7 @@ Autor: Cristofer Oswald */
 typedef struct{
 	int type;
 	int mark;
+	int mark2;
 	coord_t coord;
 }pedra_t;
 

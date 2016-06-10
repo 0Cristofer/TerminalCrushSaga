@@ -75,6 +75,8 @@ void novoJogo(game_t *jogo){
 			jogo->board[i][j].coord.x = i;
 			jogo->board[i][j].coord.y = j;
 			jogo->board[i][j].mark = FALSE;
+			jogo->board[i][j].mark2 = FALSE; //testando implementação com duas marcas
+
 
 		}
 	}
@@ -160,6 +162,7 @@ int escolhePedra(game_t *jogo, coord_t a){
 		if(r <= soma){
 			for(j = 0; j < jogo->n_sym; j++){
 				if(ordem[j] == i){
+
 					return j;
 				}
 			}
@@ -203,6 +206,10 @@ int jogada(game_t *jogo){
 		//printf("VERIFIQUEI");
 		if(testaJogada(jogo, a, b)){
 			controle = TRUE;
+			//while (controle){
+				//controle = //Estoura combo
+			//}
+			//controle = TRUE;
 		}
 		else{
 			moveCursor(jogo->h + 18, 35);
@@ -218,6 +225,7 @@ int jogada(game_t *jogo){
 		system(SLEEP " 3");
 
 	}
+
 	return controle;
 }
 
@@ -234,6 +242,28 @@ int verifica(game_t *jogo, coord_t a, coord_t b){
 	}
 	return FALSE;
 }
+
+/*int verificaBoard(game *jogo){
+	int tam, i, j, retorno;
+	fila_t *fila;
+
+	retorno = FALSE;
+
+	fila = malloc(sizeof(fila_t));
+
+	inicializaFila(fila);
+
+	for(i = 0; i < jogo->h; i++){
+		for(j = 0; j < jogo->w; j++){
+			if(jogo->board[i][j].mark2 != TRUE){
+				fila = match3(jogo,jogo->board[i][j].coord, &tam);
+			}
+
+
+		}
+	}
+
+}*/
 
 fila_t* match3(game_t *jogo, coord_t z, int* tam){
 	*tam = 1;
@@ -334,7 +364,7 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 	//game_t* copia;
 	int tam_a, tam_b, i, retorno;
 	fila_t *fila_a, *fila_b;
-	coord_t *explode_a, *explode_b, aux;
+	coord_t aux;
 	pedra_t *pedra;
 
 	retorno = FALSE;
@@ -360,12 +390,14 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 	jogo->board[b.x][b.y].coord = b;
 
 
-	printJogo(jogo,FALSE);
+	printJogo(jogo,FALSE); //firulas
+	system(SLEEP " 0.5");
 
 	/*Calcula os match3 */
 	fila_a = match3(jogo, a, &tam_a);
 	limpaMark(jogo);
 	fila_b = match3(jogo, b, &tam_b);
+	limpaMark(jogo);
 
 	/* Destroca as pedras caso não houve um match3 */
 	if(!((tam_a >= 3) || (tam_b >= 3))){
@@ -373,42 +405,34 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 		jogo->board[b.x][b.y] = jogo->board[a.x][a.y];
 		jogo->board[a.x][a.y] = *pedra;
 
-		jogo->board[a.x][a.y].coord = b;
-		jogo->board[b.x][b.y].coord = a;
+		jogo->board[a.x][a.y].coord = a;
+		jogo->board[b.x][b.y].coord = b;
+	} else{
+		retorno = TRUE;
 	}
 
-	if(tam_a >= 3){
-		retorno = TRUE;
-		explode_a = malloc(sizeof(coord_t) * tam_a);
-		i = 0;
-
-		while(!filaVazia(fila_a)){
-			removeFila(fila_a,pedra);
-			explode_a[i] = pedra->coord;
+	/* fila_a */
+	while(!filaVazia(fila_a)){
+		removeFila(fila_a,pedra);
+		if(tam_a >= 3){
 			jogo->board[pedra->coord.x][pedra->coord.y].type = -1;
-
 			printJogo(jogo,FALSE);
 			system(SLEEP " 0.5");
-
+			//Calcula e Printa score pela jogada?
 		}
 
-		//Calcula e Printa score pela jogada?
 	}
 
-	if(tam_b >= 3){
-		retorno = TRUE;
-		explode_b = malloc(sizeof(coord_t) * tam_b);
-		i = 0;
-
-		while(!filaVazia(fila_b)){
-			removeFila(fila_b,pedra);
-			explode_b[i] = pedra->coord;
+	/* fila_b */
+	while(!filaVazia(fila_b)){
+		removeFila(fila_b,pedra);
+		if(tam_b >= 3){
 			jogo->board[pedra->coord.x][pedra->coord.y].type = -1;
-
 			printJogo(jogo,FALSE);
 			system(SLEEP " 0.5");
+			//Calcula e Printa score pela jogada?
 		}
-		//Calcula e Printa score pela jogada?
+
 	}
 
 	/* Chama o preencheBoard */
@@ -417,7 +441,7 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 		getchar();
 		preencheBoard(jogo);
 	}
-
+	//limpaFreezão();
 	return retorno;
 }
 
@@ -431,6 +455,10 @@ int preencheBoard(game_t *jogo){
 	pedra = malloc(sizeof(pedra_t));
 	fila = malloc(sizeof(fila_t));
 	fila_pop = malloc(sizeof(fila_t));
+
+	for(i = 0; i < jogo->w; i++){
+		array[i] = 0;
+	}
 
 	for(i = 0; i < jogo->w; i++){
 		for(j = 0; j < jogo->h; j++){
