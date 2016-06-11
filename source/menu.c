@@ -2,10 +2,11 @@
 Data: 31/05/2016
 Autor: Cristofer Oswald */
 
+//Bibliotecas do sistema
 #include <stdio.h>
 #include <stdlib.h>
 
-//Nossos includes
+//Nossas bibliotecas
 #include "menu.h"
 #include "saga.h"
 #include "util.h"
@@ -21,20 +22,25 @@ int mainMenu(){
 	printf(TAB "|" TAB "\t\tX - Sai do jogo                                               |\n");
 	printLado(14);
 	printTer();
+
 	moveCursor(14, 70);
 	scanf(" %c", &op);
 
 	system(CLS);
 
 	switch(op){
-		case 's':
+		case 's': //Jogar
 			return 0;
-		case 'S':
+
+		case 'S': //Jogar
 			return 0;
-		case 'x':
+
+		case 'x': //Sair
 			return 1;
-		case 'X':
+
+		case 'X': //Sair
 			return 1;
+
 		default:
 			printf("Opção inválida, saindo do jogo...\n");
 			return 1;
@@ -49,6 +55,7 @@ void leDados(game_t *jogo){
 	printf(TAB"|Insira a quantidade de simbolos:                                                                     |\n");
 	printLado(13);
 	printTer();
+
 	moveCursor(11, 57);
 	scanf(" %d", &jogo->w);
 	moveCursor(12, 56);
@@ -61,13 +68,14 @@ void leDados(game_t *jogo){
 void printTopo(){
 	printTer();
 	printLado(1);
-        printLogo();
-        printLado(2);
+  printLogo();
+  printLado(2);
 }
 
 //Escreve n '|'
 void printLado(int n){
 	int i;
+
 	for(i = 0; i < n; i++){
 		printf(TAB"|                                                                                                     |\n");
 	}
@@ -97,7 +105,7 @@ void printLogo1080(){
 	printf("\n\n");
 }
 
-//Escreve o 'terminal', tanto do superior quanto inferior
+//Escreve o 'terminal', tanto superior quanto inferior
 void printTer(){
 	printf(TAB"-------------------------------------------------------------------------------------------------------\n");
 }
@@ -107,37 +115,42 @@ void moveCursor(int x, int y){
 	printf("\033[%d;%dH", x, y);
 }
 
-int ingame_tMenu(){
-
-}
-
 //Escreve o tabuleiro centralizado
 void printBoard(game_t *jogo){
-        int i, j, cond, par, dig, d;
+  int i, j, cond, par, dig, d;
 
 	par = (jogo->w%2) == 0 ? -1 : 0; //Caso seja par diminui um espaçamento
-	d = 1; //jogo->w > 9 ? 1 : 0;
+	d = jogo->w > 10 ? 1 : 0; // Case seja uma largura com mais de dois dígitos
 
 	for(i = 0; i < (jogo->h + 2 + d); i++){
 		printf(TAB"|");
-		cond = (LARG - (jogo->w * 3)) / 2; //Quantidade de espaços
-		dig = i > (11 + d) ? -1 : 0; //Caso seja um número com mais de dois dígitos
 
-		for(j = 0; j < (cond + dig + par + 1); j++){
+		cond = (LARG - (jogo->w * 3)) / 2; //Quantidade de espaços
+		dig = i > (11 + d) ? -1 : 0; //Caso seja uma altura com mais de dois dígitos
+
+		for(j = 0; j < (cond + dig + par + 1); j++){ //Escreve o espaçamento esquerdo
 			printf(" ");
 		}
 
-		for(j = 0; j < jogo->w; j++){
-			if((d == 1) && (i == 0)){
-				printf("%d  ", j/10);
-			}
-			else if(i == (0 + d)){
+		for(j = 0; j < jogo->w; j++){ //Escreve o tabuleiro
+			if((d == 1) && (i == 0)){ //Escreve o primeiro digito (caso tiver mais de um) da coordenada horizontal
 				if(j == 0){
 					printf("   ");
 				}
-				printf("%d  ", j);
+				if((j/10) > 0){
+					printf("%d  ", j/10);
+				}
+				else{
+					printf("   ");
+				}
 			}
-			else if(i == (1 + d)){
+			else if(i == d){ //Escreve as coordenadas horizontais
+				if(j == 0){
+					printf("   ");
+				}
+				printf("%d  ", (j%10));
+			}
+			else if(i == (1 + d)){ //Escreve as linhas horizontais
 				if(j == 0){
 					printf("---");
 				}
@@ -149,7 +162,7 @@ void printBoard(game_t *jogo){
 				}
 			}
 			else{
-				if(j == 0){
+				if(j == 0){ //Escreve as coordenadas verticais
 					printf("%d| ", (i-2-d));
 				}
 				if (jogo->board[(i-2-d)][j].type == -1){
@@ -160,16 +173,20 @@ void printBoard(game_t *jogo){
 				}
 			}
 		}
-		for(j = 0; j < cond; j++){
+
+		for(j = 0; j < cond; j++){ //Escreve o espaçamento direito
 			printf(" ");
 		}
+
 		printf("|\n");
 	}
-	printLado(2);
+
+	printLado(3 - d); //Caso a largura for maior que 10, escre um "lado" a menos
+
 }
 
 //Escreve todo o jogo (topo, tabuleiro, opções, etc)
-int printJogo(game_t* jogo, int op){
+int printJogo(game_t *jogo, int op){
 	int opt = 2;
 
 	system(CLS);
@@ -184,12 +201,34 @@ int printJogo(game_t* jogo, int op){
 	printLado(2);
 	printTer();
 	if(op){
+		printaPorcetagens(jogo);
 		moveCursor((jogo->h + 18), 26);
 		scanf(" %d", &opt);
 	}
 	return opt;
 }
 
+//Escreve as porcentagens de cada peça do tabuleiro
+void printaPorcetagens(game_t *jogo){
+	int *qt, i, j;
+
+	qt = malloc(jogo->n_sym*sizeof(int));
+	for(i = 0; i < jogo->n_sym; i++){
+		qt[i] = 0;
+	}
+
+	for(i = 0; i < jogo->h; i++){ //Conta quantas peças de cada tipo há
+		for(j = 0;j < jogo->w; j++){
+			qt[jogo->board[i][j].type] += 1;
+		}
+	}
+
+	for(i = 0; i < jogo->n_sym; i++){ //Calcula a porcentagem e escreve
+			printf("\nsimbolo %d: %d vezes, %.2lf porcento \n", (i+1), qt[i], ((qt[i]/(double)(jogo->h * jogo->w))*100) );
+	}
+}
+
+//Lê as coordenadas inseridas pelo usuário
 void leCoord(int h, coord_t *a, coord_t *b){
 	moveCursor((h + 19), 26);
 	printf("  ,  |  ,  ");
@@ -203,6 +242,7 @@ void leCoord(int h, coord_t *a, coord_t *b){
 	scanf(" %d", &b->y);
 }
 
+//Lê uma confirmação do usuário
 int confirma(int x, int y){
 	char copt;
 	int iopt;
@@ -213,13 +253,13 @@ int confirma(int x, int y){
 	scanf(" %c", &copt);
 
 	switch (copt) {
-		case 'S':
+		case 'S': //Sim
 			iopt = 1;
 			break;
-		case 's':
+		case 's': //Sim
 			iopt = 1;
 			break;
-		default:
+		default: //Não
 			iopt = 0;
 			break;
 	}

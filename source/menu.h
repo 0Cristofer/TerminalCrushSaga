@@ -5,21 +5,23 @@ Autor: Cristofer Oswald */
 #ifndef MENU
 #define MENU
 
+//Nossas bibliotecas
 #include "util.h"
 #include "saga.h"
 
-int mainMenu();
 int printJogo(game_t *jogo, int op);
 int confirma(int x, int y);
+int mainMenu();
 
 void leDados(game_t *jogo);
+void printBoard(game_t *jogo);
+void printaPorcetagens(game_t *jogo);
+void leCoord(int h, coord_t *a, coord_t *b);
+void printLado(int n);
+void moveCursor(int x, int y);
 void printCab();
 void printTopo();
-void printLado(int n);
 void printLogo();
 void printTer();
-void moveCursor(int x, int y);
-void printBoard(game_t *jogo);
-void leCoord(int h, coord_t *a, coord_t *b);
 
 #endif
