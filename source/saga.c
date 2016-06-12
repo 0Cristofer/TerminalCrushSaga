@@ -1,6 +1,6 @@
 /*Contém a lógica principal do Terminal Crush Saga
 Data: 31/05/2016
-Autor: Cristofer */
+Autor: Cristofer e Bruno*/
 
 //Nossas bibliotecas
 #include <stdlib.h>
@@ -14,7 +14,7 @@ Autor: Cristofer */
 #include "menu.h"
 #include "fila_lista_ligada/fila.h"
 
-//Função que controla o fluxo do jogo
+/* Função que controla o fluxo do jogo */
 void mainGame(game_t *jogo){
 	int opt, opt2;
 	int ctr_jogada = FALSE;
@@ -60,7 +60,7 @@ void mainGame(game_t *jogo){
 
 }
 
-//Cria o tabuleiro inicial
+/* Cria o tabuleiro inicial */
 void novoJogo(game_t *jogo){
 	int i, j, menor;
 	srand(time(NULL));
@@ -90,9 +90,11 @@ void novoJogo(game_t *jogo){
 		}
 	}
 
+	jogo->score = 0;
+
 }
 
-//Escolhe uma pedra a partir dos dados da linha e coluna de sua coordenada
+/* Escolhe uma pedra a partir dos dados da linha e coluna de sua coordenada */
 int escolhePedra(game_t *jogo, coord_t a){
 	int i, j;
 	int menor = 0;
@@ -176,7 +178,7 @@ int escolhePedra(game_t *jogo, coord_t a){
 
 }
 
-//Retorna uma lista com a posição correta de cada elemento
+/* Retorna uma lista com a posição correta de cada elemento */
 int *ordena(double *vet, int tam){
 	int i, j;
 	int *aux;
@@ -205,21 +207,22 @@ int *ordena(double *vet, int tam){
 	return aux;
 }
 
-//Controla a jogada
+/* Controla a jogada */
 int jogada(game_t *jogo){
 	int controle = FALSE;
+	int score = 0;
 	coord_t a, b;
 
 	leCoord(jogo->h, &a, &b);
 
 	if(verifica(jogo, a, b)){
-		if(testaJogada(jogo, a, b)){
+		if(testaJogada(jogo, a, b, &score)){
 			controle = TRUE;
 			while (controle){
 				printJogo(jogo, FALSE);
 				fflush(stdout);
 				system(SLEEP " 1.5");
-				controle = verificaBoard(jogo);
+				controle = verificaBoard(jogo, &score);
 			}
 			controle = TRUE;
 		}
@@ -237,10 +240,12 @@ int jogada(game_t *jogo){
 		system(SLEEP " 2");
 	}
 
+	jogo->score += score;
+
 	return controle;
 }
 
-//Verifica se é possível fazer a jogada (as pedras são adjacentes e são coordenadas válidas)
+/* Verifica se é possível fazer a jogada (as pedras são adjacentes e são coordenadas válidas) */
 int verifica(game_t *jogo, coord_t a, coord_t b){
 	if(
 	   ((a.x < jogo->h) && (a.x >= 0) && (a.y < jogo->w) && (a.y >= 0) &&	//Verifica limites em altura e largura
@@ -255,11 +260,12 @@ int verifica(game_t *jogo, coord_t a, coord_t b){
 	return FALSE;
 }
 
-//Lê o tabuleiro procurando matchs
-int verificaBoard(game_t *jogo){
+/* Lê o tabuleiro procurando matchs */
+int verificaBoard(game_t *jogo, int *score){
 	int i, j;
 	int retorno = FALSE;
 	int tam = 1;
+	int combo = 0;
 	pedra_t *pedra;
 	fila_t *fila;
 
@@ -285,8 +291,13 @@ int verificaBoard(game_t *jogo){
 					printJogo(jogo, FALSE);
 					fflush(stdout);
 					system(SLEEP " 0.3");
-					//Calcula e Printa score pela jogada?
+
 				}
+			}
+
+			if(tam >= 3){
+				combo++;
+				*score += calcScore(jogo , tam, combo);
 			}
 
 		tam = 1;
@@ -305,7 +316,7 @@ int verificaBoard(game_t *jogo){
 	return retorno;
 }
 
-//Algoritmo de procura em largura para match3
+/* Algoritmo de procura em largura para match3 */
 fila_t *match3(game_t *jogo, coord_t z, int *tam){
 	*tam = 1; //Quantidade de elementos na fila
 	fila_t *fila, *fila_aux;
@@ -402,11 +413,13 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 }
 
 //Recebe as duas coordenadas da jogada e verifica se fazem match3
-int testaJogada(game_t *jogo, coord_t a, coord_t b){
+int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 	int i, tam_a, tam_b, retorno;
 	coord_t aux;
 	fila_t *fila_a, *fila_b;
 	pedra_t *pedra;
+
+	score = malloc(sizeof(int));
 
 	retorno = FALSE;
 
@@ -462,10 +475,13 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 			printJogo(jogo, FALSE);
 			fflush(stdout);
 			system(SLEEP " 0.3");
-			//Calcula e Printa score pela jogada?
 		}
 
 	}
+
+	if (tam_a >= 3 ) *score += calcScore(jogo, tam_a, 0);
+
+	printf("valor score ate aqui %d\n", *score);
 
 	/* Mesmo para a segunda fila */
 	while(!filaVazia(fila_b)){
@@ -476,10 +492,11 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 			printJogo(jogo,FALSE);
 			fflush(stdout);
 			system(SLEEP " 0.3");
-			//Calcula e Printa score pela jogada?
 		}
 
 	}
+	if (tam_b >= 3 ) *score += calcScore(jogo, tam_b, 0);
+
 
 	free(pedra);
 	free(fila_a);
@@ -494,7 +511,7 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b){
 	return retorno;
 }
 
-//Re-preenche o tabuleiro com novas pedras
+/* Re-preenche o tabuleiro com novas pedras */
 void preencheBoard(game_t *jogo){
 	int i, j;
 	pedra_t* pedra;

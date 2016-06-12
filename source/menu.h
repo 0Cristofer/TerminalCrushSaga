@@ -11,6 +11,7 @@ Autor: Cristofer Oswald */
 
 int printJogo(game_t *jogo, int op);
 int confirma(int x, int y);
+int calcScore(game_t * jogo, int tam, int combo);
 int mainMenu();
 
 void leDados(game_t *jogo);

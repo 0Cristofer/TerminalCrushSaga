@@ -1,6 +1,6 @@
 /*Biblioteca responsável por administrar o menu do aplicativo Terminal Crush Saga
 Data: 31/05/2016
-Autor: Cristofer Oswald */
+Autor: Cristofer Oswald e Bruno Cesar */
 
 //Bibliotecas do sistema
 #include <stdio.h>
@@ -11,7 +11,7 @@ Autor: Cristofer Oswald */
 #include "saga.h"
 #include "util.h"
 
-//Mostra o menu e suas opções e a retorna a entrada do usuário
+/* Mostra o menu e suas opções e a retorna a entrada do usuário */
 int mainMenu(){
 	char op;
 
@@ -64,7 +64,7 @@ void leDados(game_t *jogo){
 	scanf(" %d", &jogo->n_sym);
 }
 
-//Escreve o topo do jogo (é chamado toda vez que a tela é limpa)
+/* Escreve o topo do jogo (é chamado toda vez que a tela é limpa) */
 void printTopo(){
 	printTer();
 	printLado(1);
@@ -81,7 +81,7 @@ void printLado(int n){
 	}
 }
 
-//Logo do jogo
+/* Logo do jogo */
 void printLogo(){
 
 	printf(TAB"|    __                      _             __                        __                               |\n");
@@ -92,7 +92,7 @@ void printLogo(){
 	printf(TAB"|                                                                                     /____/          |\n");
 }
 
-//Logo para 1080p
+/* Logo para 1080p */
 void printLogo1080(){
 	printf(" |    _________  _______   ________  _____ ______   ___  ________   ________  ___             ________  ________  ___  ___  ________  ___  ___          ________  ________  ________  ________       | \n");
 	printf(" |   |\\___   ___\\\\  ___ \\ |\\   __  \\|\\   _ \\  _   \\|\\  \\|\\   ___  \\|\\   __  \\|\\  \\           |\\   ____\\|\\   __  \\|\\  \\|\\  \\|\\   ____\\|\\  \\|\\  \\        |\\   ____\\|\\   __  \\|\\   ____\\|\\   __  \\      | \n");
@@ -110,12 +110,12 @@ void printTer(){
 	printf(TAB"-------------------------------------------------------------------------------------------------------\n");
 }
 
-//Move o cursor para a linha x, coluna y
+/* Move o cursor para a linha x, coluna y */
 void moveCursor(int x, int y){
 	printf("\033[%d;%dH", x, y);
 }
 
-//Escreve o tabuleiro centralizado
+/* Escreve o tabuleiro centralizado */
 void printBoard(game_t *jogo){
   int i, j, cond, par, dig, d;
 
@@ -185,7 +185,7 @@ void printBoard(game_t *jogo){
 
 }
 
-//Escreve todo o jogo (topo, tabuleiro, opções, etc)
+/* Escreve todo o jogo (topo, tabuleiro, opções, etc) */
 int printJogo(game_t *jogo, int op){
 	int opt = 2;
 
@@ -194,7 +194,7 @@ int printJogo(game_t *jogo, int op){
 	printBoard(jogo);
 
 	if(op){
-		printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                                       |\n");
+		printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                       ---SCORE %d ---  |\n", jogo->score);
 	}
 
 	printTer();
@@ -208,7 +208,86 @@ int printJogo(game_t *jogo, int op){
 	return opt;
 }
 
-//Escreve as porcentagens de cada peça do tabuleiro
+int calcScore(game_t *jogo, int tam, int combo){
+	int score = 0;
+	int mult = 1;
+
+	printf("tam %d combo %d \n",tam, combo );
+
+	if(combo){
+		printf("nao!\n");
+		mult = combo;
+	}
+
+
+	if(tam >= 3){
+
+		score = tam * 10 * mult;
+
+		system(CLS);
+		printTopo();
+		printBoard(jogo);
+		printTer();
+
+		if(combo){
+			//moveCursor((jogo->h + 20), 24);
+			switch (combo) {
+				case 1:
+				    printf(TAB"|                                            * COMBO! *                                               |\n");
+					break;
+
+				case 2:
+					printf(TAB"|                                        ** SUPER COMBO!! **                                          |\n");
+					break;
+
+				case 3:
+					printf(TAB"|                                      *** HYPER COMBO!!! ***                                         |\n");
+					break;
+
+				case 4:
+					printf(TAB"|                                      *** ULTRA COMBO!!! ***                                         |\n");
+					break;
+
+				default:
+					printf(TAB"|                            ***** FUCKING UNBELIVABLE COMBO!!!!! *****                               |\n");
+					break;
+			}
+
+		}
+
+		//moveCursor((jogo->h + 21), 30);
+		switch (tam) {
+			case 3:
+				printf(TAB"|                                                     BOA!                                                   |\n");
+				break;
+
+			case 4:
+				printf(TAB"|                                                     WOW!                                                   |\n");
+				break;
+
+			case 5:
+				printf(TAB"|                                                  INCRÍVEL!!                                                |\n");
+				break;
+
+			case 6:
+				printf(TAB"|                                              PARABAINS CARA!!                                              |\n");
+				break;
+
+			default:
+				printf(TAB"|                                          MEU DEUS QUE DELICIOUSER!!!                                       |\n");
+				break;
+
+		}
+	}
+
+	printLado(2);
+	printTer();
+
+	system(SLEEP " 1");
+	return score;
+}
+
+/* Escreve as porcentagens de cada peça do tabuleiro */
 void printaPorcetagens(game_t *jogo){
 	int *qt, i, j;
 
@@ -228,7 +307,7 @@ void printaPorcetagens(game_t *jogo){
 	}
 }
 
-//Lê as coordenadas inseridas pelo usuário
+/* Lê as coordenadas inseridas pelo usuário */
 void leCoord(int h, coord_t *a, coord_t *b){
 	moveCursor((h + 19), 26);
 	printf("  ,  |  ,  ");
@@ -242,7 +321,7 @@ void leCoord(int h, coord_t *a, coord_t *b){
 	scanf(" %d", &b->y);
 }
 
-//Lê uma confirmação do usuário
+/* Lê uma confirmação do usuário */
 int confirma(int x, int y){
 	char copt;
 	int iopt;

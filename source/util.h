@@ -36,6 +36,7 @@ struct game{
 	int w;
 	int h;
 	int n_sym;
+	int score;
 };
 
 void quit();
