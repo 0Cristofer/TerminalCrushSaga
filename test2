@@ -1,0 +1,53 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+ 30.45     10.04    10.04                             escolhePedra
+ 23.19     17.68     7.64                             match3
+  8.61     20.52     2.84                             insereFila
+  8.50     23.32     2.80                             removeFila
+  7.38     25.75     2.43                             preencheBoard
+  5.98     27.72     1.97                             filaVazia
+  5.97     29.69     1.97                             ordena
+  4.57     31.19     1.51                             inicializaFila
+  4.31     32.61     1.42                             verificaBoard
+  0.79     32.87     0.26                             limpaMark2
+  0.12     32.91     0.04                             confirma
+  0.03     32.92     0.01                             calcScore
+  0.03     32.93     0.01                             jogada
+  0.03     32.94     0.01                             novoJogo
+  0.03     32.95     0.01                             printJogo
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.

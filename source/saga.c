@@ -267,23 +267,25 @@ int verificaBoard(game_t *jogo, int *score){
 	int tam = 1;
 	int combo = 0;
 	pedra_t *pedra;
-	fila_t *fila;
+	fila_t *fila_mark, *fila;
 
 	pedra = malloc(sizeof(pedra_t));
+	fila_mark = malloc(sizeof(fila_t));
 	fila = malloc(sizeof(fila_t));
 
 	inicializaFila(fila);
+	inicializaFila(fila_mark);
 
 	for(i = 0; i < jogo->h; i++){ //Passa pelo tabuleiro testando se há novos matchs
 		for(j = 0; j < jogo->w; j++){
 			if(jogo->board[i][j].mark2 != TRUE){
 				fila = match3(jogo, jogo->board[i][j].coord, &tam);
-				limpaMark(jogo, 1);
 			}
 
 			while(!filaVazia(fila)){
 				removeFila(fila, pedra);
 				jogo->board[pedra->coord.x][pedra->coord.y].mark2 = TRUE; //Marca o elemento para ele não ser testado novamente
+				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y]); //Insere as pedras marcadas numa fila para depois serem desmarcadas
 
 				if(tam >= 3){
 					retorno = TRUE;
@@ -297,15 +299,20 @@ int verificaBoard(game_t *jogo, int *score){
 
 			if(tam >= 3){
 				combo++;
-				*score += calcScore(jogo , tam, combo);
+				*score = *score + calcScore(jogo , tam, combo);
 			}
 
 		tam = 1;
 		}
 	}
-	limpaMark(jogo, 2);
+
+	while(!(filaVazia(fila_mark))){ //Desmarca as pedras
+		removeFila(fila_mark, pedra);
+		jogo->board[pedra->coord.x][pedra->coord.y].mark2 = FALSE;
+	}
 
 	free(pedra);
+	free(fila_mark);
 	free(fila);
 
 	if(retorno){
@@ -319,20 +326,25 @@ int verificaBoard(game_t *jogo, int *score){
 /* Algoritmo de procura em largura para match3 */
 fila_t *match3(game_t *jogo, coord_t z, int *tam){
 	*tam = 1; //Quantidade de elementos na fila
-	fila_t *fila, *fila_aux;
+	fila_t *fila_mark, *fila_aux, *fila;
 	pedra_t *pedra;
 
-	pedra = malloc(sizeof(pedra_t));
-	fila = malloc(sizeof(fila_t));
-	fila_aux = malloc(sizeof(fila_t));
+	pedra = (pedra_t*)malloc(sizeof(pedra_t));
+	fila_aux = (fila_t*)malloc(sizeof(fila_t));
+	fila_mark = (fila_t*)malloc(sizeof(fila_t));
+	fila = (fila_t*)malloc(sizeof(fila_t));
 
 	jogo->board[z.x][z.y].mark = TRUE; //Marca a primeira pedra como visistada
+
+	inicializaFila(fila_aux);
+	insereFila(fila_aux, jogo->board[z.x][z.y]);
+
+	inicializaFila(fila_mark);
+	insereFila(fila_mark, jogo->board[z.x][z.y]);
 
 	inicializaFila(fila);
 	insereFila(fila, jogo->board[z.x][z.y]);
 
-	inicializaFila(fila_aux);
-	insereFila(fila_aux, jogo->board[z.x][z.y]);
 
 	//Preenche e esvazia a fila principal conforme acha pedras do mesmo tipo
 	while(!filaVazia(fila)){
@@ -344,6 +356,7 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 			if (jogo->board[pedra->coord.x - 1][pedra->coord.y].mark != TRUE){
 				//printf("Entrou UP mark\n");
 				jogo->board[pedra->coord.x - 1][pedra->coord.y].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x - 1][pedra->coord.y]); //Põe as pedras marcadas numa lista para depois serem desmarcadas
 
 				if (jogo->board[pedra->coord.x - 1][pedra->coord.y].type == pedra->type){ //Se não estiver marcada e for do mesmo tipo, coloca na fila
 					//printf("Entrou UP fila\n");
@@ -360,6 +373,7 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 			if (jogo->board[pedra->coord.x][pedra->coord.y + 1].mark != TRUE){
 				//printf("Entrou RIGHT mark\n");
 				jogo->board[pedra->coord.x][pedra->coord.y + 1].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
 
 				if (jogo->board[pedra->coord.x][pedra->coord.y + 1].type == pedra->type){
 					//printf("Entrou RIGHT fila\n");
@@ -376,6 +390,7 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 			if (jogo->board[pedra->coord.x + 1][pedra->coord.y].mark!= TRUE){
 				//printf("Entrou DOWN mark\n");
 				jogo->board[pedra->coord.x + 1][pedra->coord.y].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
 
 				if (jogo->board[pedra->coord.x + 1][pedra->coord.y].type == pedra->type){
 					//printf("Entrou DOWN fila\n");
@@ -394,6 +409,7 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 			if (jogo->board[pedra->coord.x][pedra->coord.y - 1].mark!= TRUE){
 				//printf("Entrou LEFT mark\n");
 				jogo->board[pedra->coord.x][pedra->coord.y - 1].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
 
 				if (jogo->board[pedra->coord.x][pedra->coord.y - 1].type == pedra->type){
 					//printf("Entrou LEFT fila\n");
@@ -406,7 +422,14 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 		}
 	}
 
+	while(!(filaVazia(fila_mark))){ //Desmarca as pedras
+		removeFila(fila_mark, pedra);
+		jogo->board[pedra->coord.x][pedra->coord.y].mark = FALSE;
+	}
+
+
 	free(pedra);
+	free(fila_mark);
 	free(fila);
 
 	return fila_aux;
@@ -418,8 +441,6 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 	coord_t aux;
 	fila_t *fila_a, *fila_b;
 	pedra_t *pedra;
-
-	score = malloc(sizeof(int));
 
 	retorno = FALSE;
 
@@ -449,9 +470,7 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 
 	/*Calcula os match3 */
 	fila_a = match3(jogo, a, &tam_a);
-	limpaMark(jogo, 1);
 	fila_b = match3(jogo, b, &tam_b);
-	limpaMark(jogo, 1);
 
 	/* Destroca as pedras caso não houve um match3 */
 	if(!((tam_a >= 3) || (tam_b >= 3))){
@@ -479,9 +498,9 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 
 	}
 
-	if (tam_a >= 3 ) *score += calcScore(jogo, tam_a, 0);
-
-	printf("valor score ate aqui %d\n", *score);
+	if (tam_a >= 3 ){
+		*score = *score + calcScore(jogo, tam_a, 0);
+	}
 
 	/* Mesmo para a segunda fila */
 	while(!filaVazia(fila_b)){
@@ -495,8 +514,10 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 		}
 
 	}
-	if (tam_b >= 3 ) *score += calcScore(jogo, tam_b, 0);
 
+	if (tam_b >= 3 ){
+		*score = *score + calcScore(jogo, tam_b, 0);
+	}
 
 	free(pedra);
 	free(fila_a);
@@ -504,7 +525,6 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 
 	/* Se formou match, repreenche o tabuleiro */
 	if(retorno){
-		//espera();
 		preencheBoard(jogo);
 	}
 
@@ -514,8 +534,8 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 /* Re-preenche o tabuleiro com novas pedras */
 void preencheBoard(game_t *jogo){
 	int i, j;
-	pedra_t* pedra;
 	int* array; //Guarda quantas pedras estouradas em cada coluna
+	pedra_t* pedra;
 	fila_t *fila, *fila_pop;
 
 	array = malloc(sizeof(int) * jogo->w);
@@ -570,23 +590,6 @@ void preencheBoard(game_t *jogo){
 	free(array);
 	free(fila);
 	free(fila_pop);
-}
-
-//Passa no tabuleiro desmarcando as peças
-void limpaMark(game_t *jogo, int type){
-	int i, j;
-
-	for(i = 0; i < jogo->h; i++){
-		for(j = 0; j < jogo->w; j++){
-			if(type == 1){
-				jogo->board[i][j].mark = FALSE;
-			}
-			else{
-				jogo->board[i][j].mark2 = FALSE;
-			}
-		}
-	}
-
 }
 
 void espera(){
