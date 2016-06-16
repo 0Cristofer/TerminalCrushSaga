@@ -15,27 +15,27 @@ Autor: Cristofer e Bruno*/
 #include "fila_lista_ligada/fila.h"
 
 /* Função que controla o fluxo do jogo */
-void mainGame(game_t *jogo){
+void mainGame(){
 	int opt, opt2;
 	int ctr_jogada = FALSE;
-	int ctr_game_t = TRUE;
+	int ctr_game = TRUE;
 
-	novoJogo(jogo);
+	novoJogo();
 
-	while(ctr_game_t){ //Enquanto há jogo
+	while(ctr_game){ //Enquanto há jogo
 
 		while(!ctr_jogada){ //Enquanto não for ecolhida jogada válida
-			opt = printJogo(jogo, TRUE);
+			opt = printJogo(TRUE);
 
 			switch (opt) {
 				case 1: //Jogar
-					ctr_jogada = jogada(jogo);
+					ctr_jogada = jogada();
 					break;
 
 				case 2: //Shuffle
 					opt2 = confirma(jogo->h + 18, 26);
 					if(opt2){
-						novoJogo(jogo);
+						novoJogo();
 					}
 					break;
 
@@ -43,7 +43,7 @@ void mainGame(game_t *jogo){
 					opt2 = confirma(jogo->h + 18, 26);
 					if(opt2){
 						ctr_jogada = TRUE;
-						ctr_game_t = FALSE;
+						ctr_game = FALSE;
 					}
 					break;
 
@@ -60,8 +60,42 @@ void mainGame(game_t *jogo){
 
 }
 
+/* Controla a jogada */
+int jogada(){
+	int controle = FALSE;
+	coord_t a, b;
+
+	leCoord(jogo->h, &a, &b);
+
+	if(verifica(a, b)){ //Se a jogada for possível
+		if(testaJogada(a, b)){ //Se houver match
+			controle = TRUE;
+			while (controle){ //Verifica se há "combos" (novos matchs) e roda até não haver mais
+				printJogo(FALSE);
+				fflush(stdout);
+				system(SLEEP " 1.5");
+				controle = verificaBoard();
+			}
+			controle = TRUE;
+		}
+		else{
+			moveCursor(jogo->h + 18, 55);
+			printf("Jogada impossível, não gera um match 3!");
+			fflush(stdout);
+			system(SLEEP " 2");
+		}
+	}
+	else{
+		moveCursor(jogo->h + 18, 35);
+		printf("Jogada impossível, as pedras não são adjacentes ou não existem!");
+		fflush(stdout);
+		system(SLEEP " 2");
+	}
+
+	return controle;
+}
 /* Cria o tabuleiro inicial */
-void novoJogo(game_t *jogo){
+void novoJogo(){
 	int i, j, menor;
 	srand(time(NULL));
 
@@ -74,7 +108,7 @@ void novoJogo(game_t *jogo){
 			jogo->board[i][j].coord.x = i;
 			jogo->board[i][j].coord.y = j;
 			jogo->board[i][j].mark = FALSE;
-			jogo->board[i][j].mark2 = FALSE; //testando implementação com duas marcas
+			jogo->board[i][j].mark2 = FALSE;
 		}
 	}
 
@@ -86,25 +120,30 @@ void novoJogo(game_t *jogo){
 
 	for(i = 0; i < jogo->h; i++){ //Preenche o resto do tabuleiro com peças escolhidas pelo escolhePedra
 		for(j = 0;j < jogo->w; j++){
-			jogo->board[i][j].type = i == j ? jogo->board[i][j].type : escolhePedra(jogo, jogo->board[i][j].coord);
+			jogo->board[i][j].type = i == j ? jogo->board[i][j].type : escolhePedra(jogo->board[i][j].coord, TRUE);
 		}
 	}
 
-	jogo->score = 0;
+	jogo->score = 0; //Inicia o score em 0
 
 }
 
 /* Escolhe uma pedra a partir dos dados da linha e coluna de sua coordenada */
-int escolhePedra(game_t *jogo, coord_t a){
+int escolhePedra(coord_t a, int check){
 	int i, j;
 	int menor = 0;
 	int n_0 = 1;
+	int tam = 1;
 	int *ordem;
 	double p, resto, r;
 	double soma = 0;
 	double *percents, *n_percents;
+	pedra_t *pedra;
+	fila_t *fila;
 
+	pedra = malloc(sizeof(pedra_t));
 	percents = malloc(jogo->n_sym * sizeof(double));
+	n_percents = malloc(jogo->n_sym * sizeof(double));
 
 	for(i = 0; i < jogo->n_sym; i++){
 		percents[i] = 0;
@@ -155,27 +194,46 @@ int escolhePedra(game_t *jogo, coord_t a){
 	}
 
 	soma = 0;
-	r = rand() % 100 + 1; //Aleatoriza um número de 1 a 100
 	ordem = ordena(percents, jogo->n_sym); //Recebe a ordem das porcentagens
-
-	n_percents = malloc(jogo->n_sym * sizeof(double));
 
 	for(i = 0; i < jogo->n_sym; i++){ //Preenche uma lista com as porcentagens ordenadas
 		n_percents[ordem[i]] = percents[i];
 	}
 
-	for(i = 0; i < jogo->n_sym; i++){
-		soma += n_percents[i];
+	do{
+		r = rand() % 100 + 1; //Aleatoriza um número de 1 a 100
+		for(i = 0; i < jogo->n_sym; i++){
+			soma += n_percents[i];
 
-		if(r <= soma){ //Se a soma das porcentagens até o momento chegarem no numero gerado
-			for(j = 0; j < jogo->n_sym; j++){ //Procura qual dos tipos ele representa
-				if(ordem[j] == i){
-					return j;
+			if(r <= soma){ //Se a soma das porcentagens até o momento chegarem no numero gerado
+				for(j = 0; j < jogo->n_sym; j++){ //Procura qual dos tipos ele representa
+					if(ordem[j] == i){
+						if(check){
+							jogo->board[a.x][a.y].type = j;
+							fila = match3(a, &tam);
+							if(tam < 3){
+								jogo->board[a.x][a.y].type = -1;
+								check = FALSE;
+							}
+							while(!(filaVazia(fila))){
+								removeFila(fila, pedra);
+							}
+						}
+						break;
+					}
 				}
+				break;
 			}
 		}
-	}
+	} while(check);
 
+	free(fila);
+	free(pedra);
+	free(percents);
+	free(n_percents);
+	free(ordem);
+
+	return j;
 }
 
 /* Retorna uma lista com a posição correta de cada elemento */
@@ -207,46 +265,9 @@ int *ordena(double *vet, int tam){
 	return aux;
 }
 
-/* Controla a jogada */
-int jogada(game_t *jogo){
-	int controle = FALSE;
-	int score = 0;
-	coord_t a, b;
-
-	leCoord(jogo->h, &a, &b);
-
-	if(verifica(jogo, a, b)){
-		if(testaJogada(jogo, a, b, &score)){
-			controle = TRUE;
-			while (controle){
-				printJogo(jogo, FALSE);
-				fflush(stdout);
-				system(SLEEP " 1.5");
-				controle = verificaBoard(jogo, &score);
-			}
-			controle = TRUE;
-		}
-		else{
-			moveCursor(jogo->h + 18, 55);
-			printf("Jogada impossível, não gera um match 3!");
-			fflush(stdout);
-			system(SLEEP " 2");
-		}
-	}
-	else{
-		moveCursor(jogo->h + 18, 35);
-		printf("Jogada impossível, as pedras não são adjacentes ou não existem!");
-		fflush(stdout);
-		system(SLEEP " 2");
-	}
-
-	jogo->score += score;
-
-	return controle;
-}
 
 /* Verifica se é possível fazer a jogada (as pedras são adjacentes e são coordenadas válidas) */
-int verifica(game_t *jogo, coord_t a, coord_t b){
+int verifica(coord_t a, coord_t b){
 	if(
 	   ((a.x < jogo->h) && (a.x >= 0) && (a.y < jogo->w) && (a.y >= 0) &&	//Verifica limites em altura e largura
             (b.x < jogo->h) && (b.x >= 0) && (b.y < jogo->w) && (b.y >= 0)) && 	// ||       ||
@@ -261,7 +282,7 @@ int verifica(game_t *jogo, coord_t a, coord_t b){
 }
 
 /* Lê o tabuleiro procurando matchs */
-int verificaBoard(game_t *jogo, int *score){
+int verificaBoard(){
 	int i, j;
 	int retorno = FALSE;
 	int tam = 1;
@@ -271,35 +292,42 @@ int verificaBoard(game_t *jogo, int *score){
 
 	pedra = malloc(sizeof(pedra_t));
 	fila_mark = malloc(sizeof(fila_t));
-	fila = malloc(sizeof(fila_t));
 
-	inicializaFila(fila);
 	inicializaFila(fila_mark);
+	inicializaFila(fila);
 
 	for(i = 0; i < jogo->h; i++){ //Passa pelo tabuleiro testando se há novos matchs
 		for(j = 0; j < jogo->w; j++){
 			if(jogo->board[i][j].mark2 != TRUE){
-				fila = match3(jogo, jogo->board[i][j].coord, &tam);
+				fila = match3(jogo->board[i][j].coord, &tam);
 			}
 
-			while(!filaVazia(fila)){
-				removeFila(fila, pedra);
-				jogo->board[pedra->coord.x][pedra->coord.y].mark2 = TRUE; //Marca o elemento para ele não ser testado novamente
-				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y]); //Insere as pedras marcadas numa fila para depois serem desmarcadas
+			if(tam >= 3){ //Se o tamanho for maior que 3, "estoura" as pedras e marca
+				while(!filaVazia(fila)){
+					removeFila(fila, pedra);
 
-				if(tam >= 3){
-					retorno = TRUE;
+					jogo->board[pedra->coord.x][pedra->coord.y].mark2 = TRUE; //Marca o elemento para ele não ser testado novamente
+					insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y]); //Insere as pedras marcadas numa fila para depois serem desmarcadas
+
 					jogo->board[pedra->coord.x][pedra->coord.y].type = -1;
-					printJogo(jogo, FALSE);
+
+					printJogo(FALSE);
 					fflush(stdout);
 					system(SLEEP " 0.3");
-
 				}
-			}
 
-			if(tam >= 3){
-				combo++;
-				*score = *score + calcScore(jogo , tam, combo);
+				retorno = TRUE;
+				combo = combo + 1;
+				calcScore(tam, combo); //Para cada novo match encontrado aumenta o combo e calcula o score
+				printCombo(tam, combo);
+			}
+			else{ //Se não, só marca
+				while(!filaVazia(fila)){
+					removeFila(fila, pedra);
+
+					jogo->board[pedra->coord.x][pedra->coord.y].mark2 = TRUE;
+					insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y]);
+				}
 			}
 
 		tam = 1;
@@ -317,22 +345,22 @@ int verificaBoard(game_t *jogo, int *score){
 
 	if(retorno){
 		system(SLEEP " 0.5");
-		preencheBoard(jogo);
+		preencheBoard();
 	}
 
 	return retorno;
 }
 
 /* Algoritmo de procura em largura para match3 */
-fila_t *match3(game_t *jogo, coord_t z, int *tam){
+fila_t *match3(coord_t z, int *tam){
 	*tam = 1; //Quantidade de elementos na fila
 	fila_t *fila_mark, *fila_aux, *fila;
 	pedra_t *pedra;
 
-	pedra = (pedra_t*)malloc(sizeof(pedra_t));
-	fila_aux = (fila_t*)malloc(sizeof(fila_t));
-	fila_mark = (fila_t*)malloc(sizeof(fila_t));
-	fila = (fila_t*)malloc(sizeof(fila_t));
+	pedra = malloc(sizeof(pedra_t));
+	fila_aux = malloc(sizeof(fila_t));
+	fila_mark = malloc(sizeof(fila_t));
+	fila = malloc(sizeof(fila_t));
 
 	jogo->board[z.x][z.y].mark = TRUE; //Marca a primeira pedra como visistada
 
@@ -436,7 +464,7 @@ fila_t *match3(game_t *jogo, coord_t z, int *tam){
 }
 
 //Recebe as duas coordenadas da jogada e verifica se fazem match3
-int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
+int testaJogada(coord_t a, coord_t b){
 	int i, tam_a, tam_b, retorno;
 	coord_t aux;
 	fila_t *fila_a, *fila_b;
@@ -445,12 +473,6 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 	retorno = FALSE;
 
 	pedra = malloc(sizeof(pedra_t));
-	fila_a = malloc(sizeof(fila_t));
-	fila_b = malloc(sizeof(fila_t));
-
-	inicializaFila(fila_a);
-	inicializaFila(fila_b);
-
 
 	/* Troca as pedras no board */
 	*pedra = jogo->board[a.x][a.y];
@@ -464,16 +486,16 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 	jogo->board[a.x][a.y].coord = a;
 	jogo->board[b.x][b.y].coord = b;
 
-	printJogo(jogo, FALSE); //firulas
+	printJogo(FALSE);
 	fflush(stdout);
 	system(SLEEP " 0.7");
 
 	/*Calcula os match3 */
-	fila_a = match3(jogo, a, &tam_a);
-	fila_b = match3(jogo, b, &tam_b);
+	fila_a = match3(a, &tam_a);
+	fila_b = match3(b, &tam_b);
 
 	/* Destroca as pedras caso não houve um match3 */
-	if(!((tam_a >= 3) || (tam_b >= 3))){
+	if((tam_a < 3) && (tam_b < 3)){
 		*pedra = jogo->board[b.x][b.y];
 		jogo->board[b.x][b.y] = jogo->board[a.x][a.y];
 		jogo->board[a.x][a.y] = *pedra;
@@ -485,38 +507,44 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 		retorno = TRUE;
 	}
 
-	/* Esvazia a primeira fila, se a fila for maior que 3 (formou match), atribui seu tipo para -1 ("vazio") e escreve na tela */
-	while(!filaVazia(fila_a)){
-		removeFila(fila_a, pedra);
+	if(tam_a >= 3){//Se o tamanho for maior que 3, "estoura" as pedras
+		while(!filaVazia(fila_a)){
+			removeFila(fila_a, pedra);
 
-		if(tam_a >= 3){
 			jogo->board[pedra->coord.x][pedra->coord.y].type = -1;
-			printJogo(jogo, FALSE);
+
+			printJogo(FALSE);
 			fflush(stdout);
 			system(SLEEP " 0.3");
 		}
 
+		calcScore(tam_a, 0);
+		printCombo(tam_a, 0);
+	}
+	else{//Se não, só remove da fila
+		while(!filaVazia(fila_a)){
+			removeFila(fila_a, pedra);
+		}
 	}
 
-	if (tam_a >= 3 ){
-		*score = *score + calcScore(jogo, tam_a, 0);
-	}
+	if(tam_b >= 3){
+		while(!filaVazia(fila_b)){
+			removeFila(fila_b, pedra);
 
-	/* Mesmo para a segunda fila */
-	while(!filaVazia(fila_b)){
-		removeFila(fila_b, pedra);
-
-		if(tam_b >= 3){
 			jogo->board[pedra->coord.x][pedra->coord.y].type = -1;
-			printJogo(jogo,FALSE);
+
+			printJogo(FALSE);
 			fflush(stdout);
 			system(SLEEP " 0.3");
 		}
 
+		calcScore(tam_b, 0);
+		printCombo(tam_b, 0);
 	}
-
-	if (tam_b >= 3 ){
-		*score = *score + calcScore(jogo, tam_b, 0);
+	else{
+		while(!filaVazia(fila_b)){
+			removeFila(fila_b, pedra);
+		}
 	}
 
 	free(pedra);
@@ -525,14 +553,14 @@ int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score){
 
 	/* Se formou match, repreenche o tabuleiro */
 	if(retorno){
-		preencheBoard(jogo);
+		preencheBoard();
 	}
 
 	return retorno;
 }
 
 /* Re-preenche o tabuleiro com novas pedras */
-void preencheBoard(game_t *jogo){
+void preencheBoard(){
 	int i, j;
 	int* array; //Guarda quantas pedras estouradas em cada coluna
 	pedra_t* pedra;
@@ -572,7 +600,7 @@ void preencheBoard(game_t *jogo){
 			/* Para o numero de pedras estouradas de cada coluna, gera novas pedras e insere na fila principal */
 			for(j = 0; j < array[i]; j++){
 				removeFila(fila_pop, pedra);
-				pedra->type = escolhePedra(jogo, pedra->coord);
+				pedra->type = escolhePedra(pedra->coord, FALSE);
 				insereFila(fila, *pedra);
 			}
 
@@ -590,6 +618,13 @@ void preencheBoard(game_t *jogo){
 	free(array);
 	free(fila);
 	free(fila_pop);
+}
+
+void calcScore(int tam, int combo){
+	int mult = 1;
+
+	mult = combo == 0 ? mult : combo;
+	jogo->score = jogo->score + (tam * 10 * mult);
 }
 
 void espera(){

@@ -12,18 +12,19 @@ autor: Cristofer Oswald */
 #include "menu.h"
 #include "saga.h"
 
+game_t *jogo; //Variável global
+
 //Função principal
 int main(){
 	int menu;
-	game_t *jogo;
 
 	jogo = malloc(sizeof(game_t));
 	menu = mainMenu();
 
 	switch(menu){
 		case 0: //Novo jogo
-			leDados(jogo);
-			mainGame(jogo);
+			leDados();
+			mainGame();
 			break;
 
 		case 1: //Sair

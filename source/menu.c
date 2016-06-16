@@ -48,7 +48,7 @@ int mainMenu(){
 }
 
 //Lê os dados do jogo (tamanho do tabuleiro e quantidade de tipos de peças)
-void leDados(game_t *jogo){
+void leDados(){
 	printTopo();
 	printf(TAB"|Insira a largura do tabuleiro:                                                                       |\n");
 	printf(TAB"|Insira a altura do tabuleiro:                                                                        |\n");
@@ -116,7 +116,7 @@ void moveCursor(int x, int y){
 }
 
 /* Escreve o tabuleiro centralizado */
-void printBoard(game_t *jogo){
+void printBoard(){
   int i, j, cond, par, dig, d;
 
 	par = (jogo->w%2) == 0 ? -1 : 0; //Caso seja par diminui um espaçamento
@@ -186,109 +186,103 @@ void printBoard(game_t *jogo){
 }
 
 /* Escreve todo o jogo (topo, tabuleiro, opções, etc) */
-int printJogo(game_t *jogo, int op){
+int printJogo(int op){
 	int opt = 2;
+	int w = 0;
+	int score = 0;
 
 	system(CLS);
 	printTopo();
-	printBoard(jogo);
+	printBoard();
 
 	if(op){
-		printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair                                       ---SCORE %d ---  |\n", jogo->score);
+		score = jogo->score;
+		printf(TAB"|  1 - Realizar jogada | 2 - Shuffle | 3 - Sair");
+		while((score / 10) >= 1){
+			w = w + 1;
+			score = score / 10;
+		}
+		moveCursor((jogo->h + 16), (111 - w));
+		printf("---SCORE %d ---  |\n", jogo->score);
 	}
 
 	printTer();
 	printLado(2);
 	printTer();
 	if(op){
-		printaPorcetagens(jogo);
+		printaPorcetagens();
 		moveCursor((jogo->h + 18), 26);
 		scanf(" %d", &opt);
 	}
 	return opt;
 }
 
-int calcScore(game_t *jogo, int tam, int combo){
-	int score = 0;
-	int mult = 1;
+void printCombo(int tam, int combo){
 
-	printf("tam %d combo %d \n",tam, combo );
+	switch (tam) {
+		case 3:
+			moveCursor(jogo->h + 17, 73);
+			printf("BOA!");
+			break;
 
-	if(combo){
-		printf("nao!\n");
-		mult = combo;
+		case 4:
+			moveCursor(jogo->h + 17, 73);
+			printf("WOW!");
+			break;
+
+		case 5:
+			moveCursor(jogo->h + 17, 70);
+			printf("INCRÍVEL!!");
+			break;
+
+		case 6:
+			moveCursor(jogo->h + 17, 69);
+			printf("PARABAINS CARA!!");
+			break;
+
+		default:
+			moveCursor(jogo->h + 17, 61);
+			printf("MEU DEUS QUE DELICIOUSER!!!");
+			break;
+
 	}
 
+	if(combo){
+		switch (combo) {
+			case 1:
+				moveCursor(jogo->h + 18, 70);
+			  printf("* COMBO! *");
+				break;
 
-	if(tam >= 3){
+			case 2:
+				moveCursor(jogo->h + 18, 63);
+				printf("** SUPER COMBO!! **");
+				break;
 
-		score = tam * 10 * mult;
-
-		system(CLS);
-		printTopo();
-		printBoard(jogo);
-		printTer();
-
-		if(combo){
-			//moveCursor((jogo->h + 20), 24);
-			switch (combo) {
-				case 1:
-				    printf(TAB"|                                            * COMBO! *                                               |\n");
-					break;
-
-				case 2:
-					printf(TAB"|                                        ** SUPER COMBO!! **                                          |\n");
-					break;
-
-				case 3:
-					printf(TAB"|                                      *** HYPER COMBO!!! ***                                         |\n");
-					break;
-
-				case 4:
-					printf(TAB"|                                      *** ULTRA COMBO!!! ***                                         |\n");
-					break;
-
-				default:
-					printf(TAB"|                            ***** FUCKING UNBELIVABLE COMBO!!!!! *****                               |\n");
-					break;
-			}
-
-		}
-
-		//moveCursor((jogo->h + 21), 30);
-		switch (tam) {
 			case 3:
-				printf(TAB"|                                                     BOA!                                                   |\n");
+				moveCursor(jogo->h + 18, 64);
+				printf("*** HYPER COMBO!!! ***");
 				break;
 
 			case 4:
-				printf(TAB"|                                                     WOW!                                                   |\n");
-				break;
-
-			case 5:
-				printf(TAB"|                                                  INCRÍVEL!!                                                |\n");
-				break;
-
-			case 6:
-				printf(TAB"|                                              PARABAINS CARA!!                                              |\n");
+				moveCursor(jogo->h + 18, 64);
+				printf("*** ULTRA COMBO!!! ***");
 				break;
 
 			default:
-				printf(TAB"|                                          MEU DEUS QUE DELICIOUSER!!!                                       |\n");
+				moveCursor(jogo->h + 18, 52);
+				printf("***** FUCKING UNBELIVABLE COMBO!!!!! *****");
 				break;
-
 		}
+
 	}
-
-	printLado(2);
-	printTer();
-
+	fflush(stdout);
 	system(SLEEP " 1");
-	return score;
+	//espera();
 }
 
 /* Escreve as porcentagens de cada peça do tabuleiro */
-void printaPorcetagens(game_t *jogo){
+void printaPorcetagens(){
 	int *qt, i, j;
 
 	qt = malloc(jogo->n_sym*sizeof(int));
@@ -305,6 +299,8 @@ void printaPorcetagens(game_t *jogo){
 	for(i = 0; i < jogo->n_sym; i++){ //Calcula a porcentagem e escreve
 			printf("\nsimbolo %d: %d vezes, %.2lf porcento \n", (i+1), qt[i], ((qt[i]/(double)(jogo->h * jogo->w))*100) );
 	}
+
+	free(qt);
 }
 
 /* Lê as coordenadas inseridas pelo usuário */

@@ -9,20 +9,20 @@ Autor: Cristofer Oswald */
 #include "util.h"
 #include "saga.h"
 
-int printJogo(game_t *jogo, int op);
 int confirma(int x, int y);
-int calcScore(game_t * jogo, int tam, int combo);
+int printJogo(int op);
 int mainMenu();
 
-void leDados(game_t *jogo);
-void printBoard(game_t *jogo);
-void printaPorcetagens(game_t *jogo);
 void leCoord(int h, coord_t *a, coord_t *b);
-void printLado(int n);
+void printCombo(int tam, int combo);
 void moveCursor(int x, int y);
-void printCab();
+void printLado(int n);
+void printaPorcetagens();
+void printBoard();
 void printTopo();
 void printLogo();
+void printCab();
 void printTer();
+void leDados();
 
 #endif

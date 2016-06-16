@@ -39,6 +39,8 @@ struct game{
 	int score;
 };
 
+extern game_t *jogo; //Variável global
+
 void quit();
 
 #endif

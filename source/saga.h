@@ -9,19 +9,19 @@ Autor: Cristofer Oswald */
 #include "util.h"
 #include "fila_lista_ligada/fila.h"
 
-int verifica(game_t *jogo, coord_t a, coord_t b);
-int testaJogada(game_t *jogo, coord_t a, coord_t b, int *score);
-int escolhePedra(game_t *jogo, coord_t a);
-int jogada(game_t *jogo);
-int verificaBoard(game_t *jogo, int *score);
+int verifica(coord_t a, coord_t b);
+int testaJogada(coord_t a, coord_t b);
+int escolhePedra(coord_t a, int check);
 int *ordena(double *vet, int tam);
+int verificaBoard();
+int jogada();
 
-fila_t *match3(game_t *jogo, coord_t z, int *tam);
+fila_t *match3(coord_t z, int *tam);
 
-void mainGame(game_t *jogo);
-void novoJogo(game_t *jogo);
-void preencheBoard(game_t *jogo);
-void limpaMark(game_t *jogo, int type);
+void calcScore(int tam, int combo);
+void mainGame();
+void novoJogo();
+void preencheBoard();
 void espera();
 
 #endif
