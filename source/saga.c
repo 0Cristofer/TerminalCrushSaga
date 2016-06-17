@@ -94,6 +94,7 @@ int jogada(){
 
 	return controle;
 }
+
 /* Cria o tabuleiro inicial */
 void novoJogo(){
 	int i, j, menor;
@@ -120,7 +121,9 @@ void novoJogo(){
 
 	for(i = 0; i < jogo->h; i++){ //Preenche o resto do tabuleiro com peças escolhidas pelo escolhePedra
 		for(j = 0;j < jogo->w; j++){
-			jogo->board[i][j].type = i == j ? jogo->board[i][j].type : escolhePedra(jogo->board[i][j].coord, TRUE);
+			if(i != j){
+				escolhePedra(jogo->board[i][j].coord, 100, 70);
+			}
 		}
 	}
 
@@ -129,14 +132,21 @@ void novoJogo(){
 }
 
 /* Escolhe uma pedra a partir dos dados da linha e coluna de sua coordenada */
-int escolhePedra(coord_t a, int check){
+void escolhePedra(coord_t a, int change, int max){
+	//int change é a possibilidade (0 - 100) de, quanda a pedra escolhida gerar match, ela ser elimidada e a pedra reencolhida
+	//int max é a probabilidade maxima de uma pedra ser esolhida
 	int i, j;
+	int n_removidos = 0;
+	int removidos[4];
+	int somar = TRUE;
 	int menor = 0;
 	int n_0 = 1;
 	int tam = 1;
+	int escolhe = TRUE;
 	int *ordem;
-	double p, resto, r;
+	double p, resto, r, c;
 	double soma = 0;
+	double soma_r = 0;
 	double *percents, *n_percents;
 	pedra_t *pedra;
 	fila_t *fila;
@@ -166,6 +176,7 @@ int escolhePedra(coord_t a, int check){
 	}
 
 	for(i = 1; i < jogo->n_sym; i++){ //Verifica qual a menor porcentagem
+
 		if(percents[i] == percents[menor]){ //Se hover iguais, ramdomiza sua colocação
 			r = rand() % 2;
 			if(r){
@@ -178,7 +189,7 @@ int escolhePedra(coord_t a, int check){
 	}
 
 	p = 100 - percents[menor]; //Inverte a porcentagem do menor
-	p = p > 70 ? 70 : p; //Caso for maior que 70, diminui ela para 70
+	p = p > max ? max : p; //Caso for maior que max, diminui ela para max
 	resto = 100 - p; //Para distribuição entre os outros elementos
 
 	for(i = 0; i < jogo->n_sym; i++){ //Calcula quantos elementos do tipos não-menor há
@@ -193,47 +204,79 @@ int escolhePedra(coord_t a, int check){
 		percents[i] = i == menor ? p/n_0 : percents[i] == 0 ? p/n_0 : (percents[i] / soma) * resto;
 	}
 
-	soma = 0;
 	ordem = ordena(percents, jogo->n_sym); //Recebe a ordem das porcentagens
 
 	for(i = 0; i < jogo->n_sym; i++){ //Preenche uma lista com as porcentagens ordenadas
 		n_percents[ordem[i]] = percents[i];
 	}
 
-	do{
-		r = rand() % 100 + 1; //Aleatoriza um número de 1 a 100
-		for(i = 0; i < jogo->n_sym; i++){
-			soma += n_percents[i];
+	while(escolhe){ //Enquanto tiver que escolher
+		if(soma_r >= 99.9){ 							 //Se a soma das porcentagens for maior ou igual a 100, significa que essa configuração é impossível
+			if(change < 100){									 //Se a possibilidade for menor que 100 (pode acontecer match), randomiza uma pedra
+				jogo->board[a.x][a.y].type = rand() % jogo->n_sym;
+				escolhe = FALSE;
+			}
+			else{													 //Se for 100, quer dizer que não pode haver match, logo, o jogo não pode acontecer
+				printf("Combinação tamanho do tabuleiro/quantidade de peças impossível, abortando\n");
+				exit(0);
+			}
+		}
+		else{
+			soma = 0;  //Soma inicial para cada iteração é 0
+			r = (rand() % (100 - (int)soma_r)) + 1; //Aleatoriza um número de 1 a 100 menos as somas das porcentagens removidas
 
-			if(r <= soma){ //Se a soma das porcentagens até o momento chegarem no numero gerado
-				for(j = 0; j < jogo->n_sym; j++){ //Procura qual dos tipos ele representa
-					if(ordem[j] == i){
-						if(check){
-							jogo->board[a.x][a.y].type = j;
-							fila = match3(a, &tam);
-							if(tam < 3){
-								jogo->board[a.x][a.y].type = -1;
-								check = FALSE;
-							}
-							while(!(filaVazia(fila))){
-								removeFila(fila, pedra);
-							}
-						}
+			for(i = 0; i < jogo->n_sym; i++){
+				somar = TRUE;											//Inicialmente a porcentagem deve ser somada
+
+				for(j = 0; j < n_removidos; j++){ //Verifica se o i está entre os removidos
+					if(i == ordem[removidos[j]]){
+						somar = FALSE;
 						break;
 					}
 				}
-				break;
+
+				soma = somar == FALSE ? soma : soma + n_percents[i]; //Se não estiver, soma o valor dele, se sim, não soma
+
+				if(r <= soma){ //Se a soma das porcentagens até o momento chegarem no numero gerado
+					for(j = 0; j < jogo->n_sym; j++){ //Procura qual dos tipos ele representa
+						if(ordem[j] == i){
+							jogo->board[a.x][a.y].type = j; //Define o tipo da pedra esolhida
+							fila = match3(a, &tam);         //Verifica se com a nova pedra houve match
+
+							while(!(filaVazia(fila))){ //Esvazia a fila
+								removeFila(fila, pedra);
+							}
+
+							if(tam >= 3){ //Se houve match
+								c = (rand() % 100) + 1;            //Randomiza um valor
+								if(c <= change){ 									 //Se esse valor for menor que o passado por parâmetro, remove a chance desse tipo ser escolhido novamente
+									jogo->board[a.x][a.y].type = -1; //Redefine o tipo da pedra esolhida
+									soma_r = soma_r + percents[j];   //Remove a porcentagem referente a pedra
+									removidos[n_removidos] = j; 		 //Põe ela na lista das removidas
+									n_removidos = n_removidos + 1;   //Aumenta o número de removidos
+
+								} //Se não for maior, termina de escolher
+								else{
+									escolhe = FALSE;
+								}
+							} //Se não houve, termina de escolher
+							else{
+								escolhe = FALSE;
+							}
+							break;
+						}
+					}
+					break;
+				}
 			}
 		}
-	} while(check);
+	}
 
 	free(fila);
 	free(pedra);
 	free(percents);
 	free(n_percents);
 	free(ordem);
-
-	return j;
 }
 
 /* Retorna uma lista com a posição correta de cada elemento */
@@ -597,10 +640,9 @@ void preencheBoard(){
 				}
 			}
 
-			/* Para o numero de pedras estouradas de cada coluna, gera novas pedras e insere na fila principal */
+			/* Para o numero de pedras estouradas de cada coluna, remove da fila secundaria e insere na fila principal */
 			for(j = 0; j < array[i]; j++){
 				removeFila(fila_pop, pedra);
-				pedra->type = escolhePedra(pedra->coord, FALSE);
 				insereFila(fila, *pedra);
 			}
 
@@ -609,10 +651,22 @@ void preencheBoard(){
 				removeFila(fila, pedra);
 				pedra->coord.x = j;
 				pedra->coord.y = i;
+				if(pedra->type == -1){ //Se a pedra for vazia, insere na fila para escolha do tipo;
+					insereFila(fila_pop, *pedra);
+				}
 				jogo->board[j][i] = *pedra;
+			}
+			while(!(filaVazia(fila_pop))){ //Passa escolhendo o tipo da pedra
+				printf("remove\n");
+				removeFila(fila_pop, pedra);
+				printf("escolhe\n");
+				escolhePedra(pedra->coord, 50, 70);
+				printf("escolheuuuuu\n");
 			}
 		}
 	}
+
+	printf("preencheu\n");
 
 	free(pedra);
 	free(array);

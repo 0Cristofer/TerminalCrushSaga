@@ -11,13 +11,13 @@ Autor: Cristofer Oswald */
 
 int verifica(coord_t a, coord_t b);
 int testaJogada(coord_t a, coord_t b);
-int escolhePedra(coord_t a, int check);
 int *ordena(double *vet, int tam);
 int verificaBoard();
 int jogada();
 
 fila_t *match3(coord_t z, int *tam);
 
+void escolhePedra(coord_t a, int change, int max);
 void calcScore(int tam, int combo);
 void mainGame();
 void novoJogo();

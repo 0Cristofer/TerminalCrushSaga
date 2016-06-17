@@ -13,7 +13,7 @@ Autor: Cristofer Oswald e Bruno Cesar */
 
 /* Mostra o menu e suas opções e a retorna a entrada do usuário */
 int mainMenu(){
-	char op;
+	char *op, opt;
 
 	system(CLS);
 	printTopo();
@@ -24,11 +24,14 @@ int mainMenu(){
 	printTer();
 
 	moveCursor(14, 70);
-	scanf(" %c", &op);
+	scanf(" %ms", &op); //Lê um número indeterminado de caracteres
+
+	opt = op[0]; //Pega apenas o primeiro
+	free(op); //Limpa a memória
 
 	system(CLS);
 
-	switch(op){
+	switch(opt){
 		case 's': //Jogar
 			return 0;
 
@@ -62,6 +65,23 @@ void leDados(){
 	scanf(" %d", &jogo->h);
 	moveCursor(13, 59);
 	scanf(" %d", &jogo->n_sym);
+
+	if( ((jogo->w < 4) || (jogo->w > 20) ) || ((jogo->h < 4) || (jogo->h > 20)) ){
+		moveCursor(15, 27);
+		printf("Tabuleiro definido com dimensões maiores ou menores que as permitidas, por favor, reinsira os dados");
+		fflush(stdout);
+		system(SLEEP " 1.5");
+		system(CLS);
+		leDados();
+	}
+	else if((jogo->n_sym < 4) || (jogo->n_sym > 9)){
+		moveCursor(15, 30);
+		printf("Número de simbolos é muito grande ou pequeno, por favor reinsira os dados");
+		fflush(stdout);
+		system(SLEEP " 1.5");
+		system(CLS);
+		leDados();
+	}
 }
 
 /* Escreve o topo do jogo (é chamado toda vez que a tela é limpa) */
@@ -209,11 +229,12 @@ int printJogo(int op){
 	printTer();
 	printLado(2);
 	printTer();
+
 	if(op){
-		printaPorcetagens();
 		moveCursor((jogo->h + 18), 26);
 		scanf(" %d", &opt);
 	}
+
 	return opt;
 }
 
@@ -292,7 +313,9 @@ void printaPorcetagens(){
 
 	for(i = 0; i < jogo->h; i++){ //Conta quantas peças de cada tipo há
 		for(j = 0;j < jogo->w; j++){
-			qt[jogo->board[i][j].type] += 1;
+			if(jogo->board[i][j].type != -1){
+				qt[jogo->board[i][j].type] += 1;
+			}
 		}
 	}
 
