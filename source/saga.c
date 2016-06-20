@@ -76,6 +76,7 @@ int jogada(){
 				system(SLEEP " 1.5");
 				controle = verificaBoard();
 			}
+			//verificaMatch();
 			controle = TRUE;
 		}
 		else{
@@ -241,7 +242,7 @@ void escolhePedra(coord_t a, int change, int max){
 					for(j = 0; j < jogo->n_sym; j++){ //Procura qual dos tipos ele representa
 						if(ordem[j] == i){
 							jogo->board[a.x][a.y].type = j; //Define o tipo da pedra esolhida
-							fila = match3(a, &tam);         //Verifica se com a nova pedra houve match
+							fila = match3(a, &tam, jogo->board[a.x][a.y].type);//Verifica se com a nova pedra houve match
 
 							while(!(filaVazia(fila))){ //Esvazia a fila
 								removeFila(fila, pedra);
@@ -295,7 +296,7 @@ int *ordena(double *vet, int tam){
 			if(i != j){
 				if(vet[i] > vet[j]){ //Se o elemento for maior, diminui em 1 a posição dele
 					aux[i] = aux[i] - 1;
-				}
+ 				}
 				else if(vet[i] == vet[j]){ //Se eles forem iguais, prioriza o elemento da esquerda
 					if(i < j){
 						aux[i] = aux[i] - 1;
@@ -342,7 +343,7 @@ int verificaBoard(){
 	for(i = 0; i < jogo->h; i++){ //Passa pelo tabuleiro testando se há novos matchs
 		for(j = 0; j < jogo->w; j++){
 			if(jogo->board[i][j].mark2 != TRUE){
-				fila = match3(jogo->board[i][j].coord, &tam);
+				fila = match3(jogo->board[i][j].coord, &tam, jogo->board[i][j].type);
 			}
 
 			if(tam >= 3){ //Se o tamanho for maior que 3, "estoura" as pedras e marca
@@ -394,8 +395,141 @@ int verificaBoard(){
 	return retorno;
 }
 
+/*int verificaMatch(){
+	int i, j;
+	int procura = FALSE;
+	int retorno = FALSE;
+
+	for(i = 0; i < jogo->h; i++){
+		for(j = 0; j < jogo->w; j++){
+			procura = procuraMatch(jogo->board[i][j].coord);
+			if(procura){
+				retorno = TRUE;
+				break;
+			}
+		}
+		if(procura){
+			break;
+		}
+	}
+
+}*/
+
+/*int procuraMatch(coord_t z){
+	int type;
+	int dist = 0;
+	int tam = 1; //Quantidade de elementos na fila
+	fila_t *fila_mark, *fila_aux, *fila;
+	pedra_t *pedra;
+
+	pedra = malloc(sizeof(pedra_t));
+	fila_aux = malloc(sizeof(fila_t));
+	fila_mark = malloc(sizeof(fila_t));
+	fila = malloc(sizeof(fila_t));
+
+	jogo->board[z.x][z.y].mark = TRUE; //Marca a primeira pedra como visistada
+	type = jogo->board[z.x][z.y].type;
+
+	inicializaFila(fila_aux);
+	insereFila(fila_aux, jogo->board[z.x][z.y]);
+
+	inicializaFila(fila_mark);
+	insereFila(fila_mark, jogo->board[z.x][z.y]);
+
+	inicializaFila(fila);
+	insereFila(fila, jogo->board[z.x][z.y]);
+
+
+	//Preenche e esvazia a fila principal conforme acha pedras do mesmo tipo
+	while(!filaVazia(fila)){
+		removeFila(fila, pedra);
+
+
+		if(!((pedra->coord.x - 1) < 0)){
+			//printf("Entrou UP check\n");
+			if (jogo->board[pedra->coord.x - 1][pedra->coord.y].mark != TRUE){
+				if(jogo->board[pedra->coord.x - 1][pedra->coord.y].type == type){
+					insereFila(fila, jogo->board[pedra->coord.x - 1][pedra->coord.y]);
+					qtd = qtd + 1;
+				}
+				else if(dist == 0){
+					insereFila(fila, jogo->board[pedra->coord.x - 1][pedra->coord.y]);
+				}
+				jogo->board[pedra->coord.x - 1][pedra->coord.y].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x - 1][pedra->coord.y]); //Põe as pedras marcadas numa lista para depois serem desmarcadas
+			}
+		}
+
+
+		if(!((pedra->coord.y + 1) >= jogo->w)){
+			//printf("Entrou RIGHT check\n");
+			if (jogo->board[pedra->coord.x][pedra->coord.y + 1].mark != TRUE){
+				//printf("Entrou RIGHT mark\n");
+				jogo->board[pedra->coord.x][pedra->coord.y + 1].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
+
+				if (jogo->board[pedra->coord.x][pedra->coord.y + 1].type == type){
+					//printf("Entrou RIGHT fila\n");
+					insereFila(fila, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
+					insereFila(fila_aux, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
+					*tam = *tam + 1;
+				}
+			}
+		}
+
+
+		if(!((pedra->coord.x + 1) >= jogo->h)){
+			//printf("Entrou DOWN check\n");
+			if (jogo->board[pedra->coord.x + 1][pedra->coord.y].mark!= TRUE){
+				//printf("Entrou DOWN mark\n");
+				jogo->board[pedra->coord.x + 1][pedra->coord.y].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
+
+				if (jogo->board[pedra->coord.x + 1][pedra->coord.y].type == type){
+					//printf("Entrou DOWN fila\n");
+
+					insereFila(fila, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
+					insereFila(fila_aux, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
+					*tam = *tam + 1;
+				}
+			}
+		}
+
+
+		if(!((pedra->coord.y - 1)  < 0)){
+			//printf("Entrou LEFT check\n");
+
+			if (jogo->board[pedra->coord.x][pedra->coord.y - 1].mark!= TRUE){
+				//printf("Entrou LEFT mark\n");
+				jogo->board[pedra->coord.x][pedra->coord.y - 1].mark = TRUE;
+				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
+
+				if (jogo->board[pedra->coord.x][pedra->coord.y - 1].type == type){
+					//printf("Entrou LEFT fila\n");
+
+					insereFila(fila, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
+					insereFila(fila_aux, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
+					*tam = *tam + 1;
+				}
+			}
+		}
+	}
+
+	while(!(filaVazia(fila_mark))){ //Desmarca as pedras
+		removeFila(fila_mark, pedra);
+		jogo->board[pedra->coord.x][pedra->coord.y].mark = FALSE;
+	}
+
+
+	free(pedra);
+	free(fila_mark);
+	free(fila);
+
+	return fila_aux;
+}*/
+
 /* Algoritmo de procura em largura para match3 */
-fila_t *match3(coord_t z, int *tam){
+fila_t *match3(coord_t z, int *tam, int type){
 	*tam = 1; //Quantidade de elementos na fila
 	fila_t *fila_mark, *fila_aux, *fila;
 	pedra_t *pedra;
@@ -429,7 +563,7 @@ fila_t *match3(coord_t z, int *tam){
 				jogo->board[pedra->coord.x - 1][pedra->coord.y].mark = TRUE;
 				insereFila(fila_mark, jogo->board[pedra->coord.x - 1][pedra->coord.y]); //Põe as pedras marcadas numa lista para depois serem desmarcadas
 
-				if (jogo->board[pedra->coord.x - 1][pedra->coord.y].type == pedra->type){ //Se não estiver marcada e for do mesmo tipo, coloca na fila
+				if (jogo->board[pedra->coord.x - 1][pedra->coord.y].type == type){ //Se não estiver marcada e for do mesmo tipo, coloca na fila
 					//printf("Entrou UP fila\n");
 					insereFila(fila, jogo->board[pedra->coord.x - 1][pedra->coord.y]);
 					insereFila(fila_aux, jogo->board[pedra->coord.x - 1][pedra->coord.y]);
@@ -446,7 +580,7 @@ fila_t *match3(coord_t z, int *tam){
 				jogo->board[pedra->coord.x][pedra->coord.y + 1].mark = TRUE;
 				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
 
-				if (jogo->board[pedra->coord.x][pedra->coord.y + 1].type == pedra->type){
+				if (jogo->board[pedra->coord.x][pedra->coord.y + 1].type == type){
 					//printf("Entrou RIGHT fila\n");
 					insereFila(fila, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
 					insereFila(fila_aux, jogo->board[pedra->coord.x][pedra->coord.y + 1]);
@@ -463,7 +597,7 @@ fila_t *match3(coord_t z, int *tam){
 				jogo->board[pedra->coord.x + 1][pedra->coord.y].mark = TRUE;
 				insereFila(fila_mark, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
 
-				if (jogo->board[pedra->coord.x + 1][pedra->coord.y].type == pedra->type){
+				if (jogo->board[pedra->coord.x + 1][pedra->coord.y].type == type){
 					//printf("Entrou DOWN fila\n");
 
 					insereFila(fila, jogo->board[pedra->coord.x + 1][pedra->coord.y]);
@@ -482,7 +616,7 @@ fila_t *match3(coord_t z, int *tam){
 				jogo->board[pedra->coord.x][pedra->coord.y - 1].mark = TRUE;
 				insereFila(fila_mark, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
 
-				if (jogo->board[pedra->coord.x][pedra->coord.y - 1].type == pedra->type){
+				if (jogo->board[pedra->coord.x][pedra->coord.y - 1].type == type){
 					//printf("Entrou LEFT fila\n");
 
 					insereFila(fila, jogo->board[pedra->coord.x][pedra->coord.y - 1]);
@@ -534,8 +668,8 @@ int testaJogada(coord_t a, coord_t b){
 	system(SLEEP " 0.7");
 
 	/*Calcula os match3 */
-	fila_a = match3(a, &tam_a);
-	fila_b = match3(b, &tam_b);
+	fila_a = match3(a, &tam_a, jogo->board[a.x][a.y].type);
+	fila_b = match3(b, &tam_b, jogo->board[b.x][b.y].type);
 
 	/* Destroca as pedras caso não houve um match3 */
 	if((tam_a < 3) && (tam_b < 3)){
@@ -657,16 +791,11 @@ void preencheBoard(){
 				jogo->board[j][i] = *pedra;
 			}
 			while(!(filaVazia(fila_pop))){ //Passa escolhendo o tipo da pedra
-				printf("remove\n");
 				removeFila(fila_pop, pedra);
-				printf("escolhe\n");
 				escolhePedra(pedra->coord, 50, 70);
-				printf("escolheuuuuu\n");
 			}
 		}
 	}
-
-	printf("preencheu\n");
 
 	free(pedra);
 	free(array);
