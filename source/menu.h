@@ -5,7 +5,7 @@ Autor: Cristofer Oswald */
 #ifndef MENU
 #define MENU
 
-//Nossas bibliotecas
+/*Nossas bibliotecas*/
 #include "util.h"
 #include "saga.h"
 

@@ -2,46 +2,45 @@
 Data: 31/05/2016
 Autor: Cristofer Oswald e Bruno Cesar */
 
-//Bibliotecas do sistema
+/*Bibliotecas do sistema*/
 #include <stdio.h>
 #include <stdlib.h>
 
-//Nossas bibliotecas
+/*Nossas bibliotecas*/
 #include "menu.h"
 #include "saga.h"
 #include "util.h"
 
 /* Mostra o menu e suas opções e a retorna a entrada do usuário */
 int mainMenu(){
-	char *op, opt;
+	char opt;
 
 	system(CLS);
 	printTopo();
 	printf(TAB"|                                         Menu Principal                                              |\n");
-	printf(TAB "|" TAB "\t\tS - Inicia o jogo                                             |\n");
-	printf(TAB "|" TAB "\t\tX - Sai do jogo                                               |\n");
+	printf(TAB "|" TAB "\t\tS - Inicia o jogo                                                     |\n");
+	printf(TAB "|" TAB "\t\tX - Sai do jogo                                                       |\n");
 	printLado(14);
 	printTer();
 
-	moveCursor(14, 70);
-	scanf(" %ms", &op); //Lê um número indeterminado de caracteres
-
-	opt = op[0]; //Pega apenas o primeiro
-	free(op); //Limpa a memória
-
+	moveCursor(14, 49);
+	fflush(stdout);
+	fflush(stdin);
+	scanf(" %c", &opt); /*Lê um número indeterminado de caracteres*/
+	fflush(stdin);
 	system(CLS);
 
 	switch(opt){
-		case 's': //Jogar
+		case 's': /*Jogar*/
 			return 0;
 
-		case 'S': //Jogar
+		case 'S': /*Jogar*/
 			return 0;
 
-		case 'x': //Sair
+		case 'x': /*Sair*/
 			return 1;
 
-		case 'X': //Sair
+		case 'X': /*Sair*/
 			return 1;
 
 		default:
@@ -50,7 +49,7 @@ int mainMenu(){
 	}
 }
 
-//Lê os dados do jogo (tamanho do tabuleiro e quantidade de tipos de peças)
+/*Lê os dados do jogo (tamanho do tabuleiro e quantidade de tipos de peças)*/
 void leDados(){
 	printTopo();
 	printf(TAB"|Insira a largura do tabuleiro:                                                                       |\n");
@@ -59,18 +58,21 @@ void leDados(){
 	printLado(13);
 	printTer();
 
-	moveCursor(11, 57);
+	moveCursor(11, 49);
+	fflush(stdin);
 	scanf(" %d", &jogo->w);
-	moveCursor(12, 56);
+	moveCursor(12, 48);
+	fflush(stdin);
 	scanf(" %d", &jogo->h);
-	moveCursor(13, 59);
+	moveCursor(13, 51);
+	fflush(stdin);
 	scanf(" %d", &jogo->n_sym);
 
 	if( ((jogo->w < 4) || (jogo->w > 20) ) || ((jogo->h < 4) || (jogo->h > 20)) ){
-		moveCursor(15, 27);
+		moveCursor(15, 18);
 		printf("Tabuleiro definido com dimensões maiores ou menores que as permitidas, por favor, reinsira os dados");
 		fflush(stdout);
-		system(SLEEP " 1.5");
+		system(SLEEP " 2 >nul");
 		system(CLS);
 		leDados();
 	}
@@ -78,7 +80,7 @@ void leDados(){
 		moveCursor(15, 30);
 		printf("Número de simbolos é muito grande ou pequeno, por favor reinsira os dados");
 		fflush(stdout);
-		system(SLEEP " 1.5");
+		system(SLEEP " 2 >nul");
 		system(CLS);
 		leDados();
 	}
@@ -92,7 +94,7 @@ void printTopo(){
   printLado(2);
 }
 
-//Escreve n '|'
+/*Escreve n '|' */
 void printLado(int n){
 	int i;
 
@@ -125,7 +127,7 @@ void printLogo1080(){
 	printf("\n\n");
 }
 
-//Escreve o 'terminal', tanto superior quanto inferior
+/*Escreve o 'terminal', tanto superior quanto inferior*/
 void printTer(){
 	printf(TAB"-------------------------------------------------------------------------------------------------------\n");
 }
@@ -139,21 +141,21 @@ void moveCursor(int x, int y){
 void printBoard(){
   int i, j, cond, par, dig, d;
 
-	par = (jogo->w%2) == 0 ? -1 : 0; //Caso seja par diminui um espaçamento
-	d = jogo->w > 10 ? 1 : 0; // Case seja uma largura com mais de dois dígitos
+	par = (jogo->w%2) == 0 ? -1 : 0; /*Caso seja par diminui um espaçamento*/
+	d = jogo->w > 10 ? 1 : 0; /* Case seja uma largura com mais de dois dígitos*/
 
 	for(i = 0; i < (jogo->h + 2 + d); i++){
 		printf(TAB"|");
 
-		cond = (LARG - (jogo->w * 3)) / 2; //Quantidade de espaços
-		dig = i > (11 + d) ? -1 : 0; //Caso seja uma altura com mais de dois dígitos
+		cond = (LARG - (jogo->w * 3)) / 2; /*Quantidade de espaços */
+		dig = i > (11 + d) ? -1 : 0; /*Caso seja uma altura com mais de dois dígitos */
 
-		for(j = 0; j < (cond + dig + par + 1); j++){ //Escreve o espaçamento esquerdo
+		for(j = 0; j < (cond + dig + par + 1); j++){ /*Escreve o espaçamento esquerdo*/
 			printf(" ");
 		}
 
-		for(j = 0; j < jogo->w; j++){ //Escreve o tabuleiro
-			if((d == 1) && (i == 0)){ //Escreve o primeiro digito (caso tiver mais de um) da coordenada horizontal
+		for(j = 0; j < jogo->w; j++){ /*Escreve o tabuleiro*/
+			if((d == 1) && (i == 0)){ /*Escreve o primeiro digito (caso tiver mais de um) da coordenada horizontal*/
 				if(j == 0){
 					printf("   ");
 				}
@@ -164,13 +166,13 @@ void printBoard(){
 					printf("   ");
 				}
 			}
-			else if(i == d){ //Escreve as coordenadas horizontais
+			else if(i == d){ /*Escreve as coordenadas horizontais*/
 				if(j == 0){
 					printf("   ");
 				}
 				printf("%d  ", (j%10));
 			}
-			else if(i == (1 + d)){ //Escreve as linhas horizontais
+			else if(i == (1 + d)){ /*Escreve as linhas horizontais*/
 				if(j == 0){
 					printf("---");
 				}
@@ -182,7 +184,7 @@ void printBoard(){
 				}
 			}
 			else{
-				if(j == 0){ //Escreve as coordenadas verticais
+				if(j == 0){ /*Escreve as coordenadas verticais*/
 					printf("%d| ", (i-2-d));
 				}
 				if (jogo->board[(i-2-d)][j].type == -1){
@@ -194,14 +196,14 @@ void printBoard(){
 			}
 		}
 
-		for(j = 0; j < cond; j++){ //Escreve o espaçamento direito
+		for(j = 0; j < cond; j++){ /*Escreve o espaçamento direito*/
 			printf(" ");
 		}
 
 		printf("|\n");
 	}
 
-	printLado(3 - d); //Caso a largura for maior que 10, escre um "lado" a menos
+	printLado(3 - d); /*Caso a largura for maior que 10, escre um "lado" a menos*/
 
 }
 
@@ -222,7 +224,7 @@ int printJogo(int op){
 			w = w + 1;
 			score = score / 10;
 		}
-		moveCursor((jogo->h + 16), (111 - w));
+		moveCursor((jogo->h + 16), (103 - w));
 		printf("---SCORE %d ---  |\n", jogo->score);
 	}
 
@@ -231,7 +233,8 @@ int printJogo(int op){
 	printTer();
 
 	if(op){
-		moveCursor((jogo->h + 18), 26);
+		moveCursor((jogo->h + 18), 18);
+		fflush(stdin);
 		scanf(" %d", &opt);
 	}
 
@@ -298,8 +301,7 @@ void printCombo(int tam, int combo){
 
 	}
 	fflush(stdout);
-	system(SLEEP " 1");
-	//espera();
+	system(SLEEP " 1 >nul");
 }
 
 /* Escreve as porcentagens de cada peça do tabuleiro */
@@ -311,7 +313,7 @@ void printaPorcetagens(){
 		qt[i] = 0;
 	}
 
-	for(i = 0; i < jogo->h; i++){ //Conta quantas peças de cada tipo há
+	for(i = 0; i < jogo->h; i++){ /*Conta quantas peças de cada tipo há*/
 		for(j = 0;j < jogo->w; j++){
 			if(jogo->board[i][j].type != -1){
 				qt[jogo->board[i][j].type] += 1;
@@ -319,7 +321,7 @@ void printaPorcetagens(){
 		}
 	}
 
-	for(i = 0; i < jogo->n_sym; i++){ //Calcula a porcentagem e escreve
+	for(i = 0; i < jogo->n_sym; i++){ /*Calcula a porcentagem e escreve*/
 			printf("\nsimbolo %d: %d vezes, %.2lf porcento \n", (i+1), qt[i], ((qt[i]/(double)(jogo->h * jogo->w))*100) );
 	}
 
@@ -328,15 +330,19 @@ void printaPorcetagens(){
 
 /* Lê as coordenadas inseridas pelo usuário */
 void leCoord(int h, coord_t *a, coord_t *b){
-	moveCursor((h + 19), 26);
+	moveCursor((h + 19), 18);
 	printf("  ,  |  ,  ");
-	moveCursor((h + 19), 26);
+	moveCursor((h + 19), 18);
+	fflush(stdin);
 	scanf(" %d", &a->x);
-	moveCursor((h + 19), 29);
+	moveCursor((h + 19), 21);
+	fflush(stdin);
 	scanf(" %d", &a->y);
-	moveCursor((h + 19), 32);
+	moveCursor((h + 19), 24);
+	fflush(stdin);
 	scanf(" %d", &b->x);
-	moveCursor((h + 19), 35);
+	moveCursor((h + 19), 27);
+	fflush(stdin);
 	scanf(" %d", &b->y);
 }
 
@@ -348,16 +354,17 @@ int confirma(int x, int y){
 	moveCursor(x,y);
 	printf("Você tem certeza? [S/N]");
 	moveCursor(x+1,y);
+	fflush(stdin);
 	scanf(" %c", &copt);
 
 	switch (copt) {
-		case 'S': //Sim
+		case 'S': /*Sim*/
 			iopt = 1;
 			break;
-		case 's': //Sim
+		case 's': /*Sim*/
 			iopt = 1;
 			break;
-		default: //Não
+		default: /*Não*/
 			iopt = 0;
 			break;
 	}

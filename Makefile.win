@@ -1,0 +1,42 @@
+# Project: Terminal Crush Saga
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+RES      = Terminal_Crush_Saga_private.res
+OBJ      = source/main.o source/menu.o source/saga.o source/fila_lista_ligada/fila.o $(RES)
+LINKOBJ  = source/main.o source/menu.o source/saga.o source/fila_lista_ligada/fila.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -pg
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/Cristofer Oswald/Documents/TerminalCrushSaga-master/source" -I"C:/Users/Cristofer Oswald/Documents/TerminalCrushSaga-master/source/fila_lista_ligada"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" -I"C:/Users/Cristofer Oswald/Documents/TerminalCrushSaga-master/source" -I"C:/Users/Cristofer Oswald/Documents/TerminalCrushSaga-master/source/fila_lista_ligada"
+BIN      = "Terminal Crush Saga.exe"
+CXXFLAGS = $(CXXINCS) -ansi -std=c99 -pg
+CFLAGS   = $(INCS) -ansi -std=c99 -pg
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+source/main.o: source/main.c
+	$(CC) -c source/main.c -o source/main.o $(CFLAGS)
+
+source/menu.o: source/menu.c
+	$(CC) -c source/menu.c -o source/menu.o $(CFLAGS)
+
+source/saga.o: source/saga.c
+	$(CC) -c source/saga.c -o source/saga.o $(CFLAGS)
+
+source/fila_lista_ligada/fila.o: source/fila_lista_ligada/fila.c
+	$(CC) -c source/fila_lista_ligada/fila.c -o source/fila_lista_ligada/fila.o $(CFLAGS)
+
+Terminal_Crush_Saga_private.res: Terminal_Crush_Saga_private.rc 
+	$(WINDRES) -i Terminal_Crush_Saga_private.rc --input-format=rc -o Terminal_Crush_Saga_private.res -O coff 
+

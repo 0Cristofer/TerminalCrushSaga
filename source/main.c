@@ -2,32 +2,34 @@
 Data: 31/05/2016
 autor: Cristofer Oswald */
 
-//Bibliotecas dos sistemas
+/*Bibliotecas dos sistemas*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-//Nossas bibliotecas
+/*Nossas bibliotecas*/
 #include "util.h"
 #include "menu.h"
 #include "saga.h"
 
-game_t *jogo; //Variável global
+game_t *jogo; /*Variável global*/
 
-//Função principal
+/*Fun��o principal*/
 int main(){
 	int menu;
-
+	
+	system("mode con: cols=130 lines=41");
+	
 	jogo = malloc(sizeof(game_t));
 	menu = mainMenu();
 
 	switch(menu){
-		case 0: //Novo jogo
+		case 0: /*Novo jogo*/
 			leDados();
 			mainGame();
 			break;
 
-		case 1: //Sair
+		case 1: /*Sair*/
 			quit();
 			break;
 
@@ -40,10 +42,10 @@ int main(){
 	return 0;
 }
 
-//Limpa a tela e mostra os créditos
+/*Limpa a tela e mostra os créditos*/
 void quit(){
 	system(CLS);
 	printf("\n\n\n"TAB"Todos os direitos reservados a Bruno Cesar & Cristofer Oswald, 2016\n\n");
-	system(SLEEP " 2");
+	system(SLEEP " 2 >nul");
 	system(CLS);
 }
