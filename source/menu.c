@@ -58,7 +58,7 @@ void leDados(){
 	printf(TAB"|Insira a quantidade de simbolos:                                                                     |\n");
 	printLado(13);
 	printTer();
-
+	//controle do cursor
 	moveCursor(11, 57);
 	scanf(" %d", &jogo->w);
 	moveCursor(12, 56);
