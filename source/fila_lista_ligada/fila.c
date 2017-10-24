@@ -32,7 +32,7 @@ void insereFila(fila_t* fila, pedra_t pedra){
 	elemento = malloc(sizeof(lista_t));
 	elemento->info = pedra;
 
-	if (filaVazia(fila)){
+	if (filaVazia(fila)){ //verifica se a fila é vazia, se sim, o inicio recebe o elemento senão vai para o fim
 		fila->inicio = elemento;
 	}
 	else{
